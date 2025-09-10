@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="" lang="en">
+
+<head th:replace="~{fragments/head :: head('Home')}">>
+
+</head>
+
+<body>
+
+    <nav th:replace="~{fragments/navbar :: nav}"></nav>
+
+    <main class="container">
+        <h1 class="mt-3">Qui potrai caricare le tue foto</h1>
+
+        <form th:action="@{/}" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label" for="nome">Inserisci il tuo nome:</label>
+                <input class="form-control" id="nome" type="text">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="photo">Carica la tua foto</label>
+                <input class="form-control" type="file" name="photos" accept="image/*" multiple>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Invia</button>
+        </form>
+    </main>
+
+
+
+   
+</body>
+
+
+</html>
