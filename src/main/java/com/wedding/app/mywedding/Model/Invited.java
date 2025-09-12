@@ -6,7 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+
 
 @Entity
 @Table(name = "invited")
@@ -16,13 +17,13 @@ public class Invited {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
+    @NotBlank (message = "Inserire un nome")
     public String name;
 
-    @NotNull
+    @NotBlank (message = "Inserire un cognome")
     public String surname;
 
-    @NotNull
+    @NotBlank (message = "Inserire lo stato")
     public String status;
 
     @Lob

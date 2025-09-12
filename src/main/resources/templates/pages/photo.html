@@ -23,11 +23,17 @@
             <button class="btn btn-primary" type="submit">Invia</button>
         </form>
 
-        <h4 th:if="${url}">Questo è il link per visualizzare le foto [[$url]]</h4>
+        <div class="d-flex" th:if="${success}">
+            <p>Questo è il link per visualizzare le foto: &nbsp;
+            <div th:each="uploadedFile : ${uploadedFiles}" th:object="${uploadedFile}">
+                <a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" th:href="*{url}" target="_blank">[[*{name}]]</a>
+            </div>
+            </p>
+        </div>
     </main>
 
 
- <th:block th:insert="~{fragments/footer :: script}"></th:block>
+    <th:block th:insert="~{fragments/footer :: script}"></th:block>
 
 </body>
 

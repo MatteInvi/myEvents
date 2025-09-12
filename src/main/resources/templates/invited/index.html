@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmls:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments/head :: head(Invitati)}">
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+    <main class="container mt-5">
+        <h2 class="text-center">Lista invitati</h2>
+        <section id="adding_invited" class="my-3 pt-3">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create">
+                Aggiungi invitato
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="create" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Dati invitato:</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form th:action="@{/invited/create}" th:object="${invited}" method="post">
+                                <div class="mb-3">
+                                    <label for="name">Nome</label>
+                                    <input type="text" id="name" class="form-control" th:field="*{name}"
+                                        th:errorClass="is-invalid">
+
+                                    <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback">
+                                        <ul>
+                                            <li th:each="error : ${#fields.errors('name')}" th:text="${error}"></li>
+                                        </ul>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="surnname">Cognome</label>
+                                        <input type="text" id="surname" class="form-control" th:field="*{surname}"
+                                            th:errorClass="is-invalid">
+
+                                        <div th:if="${#fields.hasErrors('surname')}" class="invalid-feedback">
+                                            <ul>
+                                                <li th:each="error : ${#fields.errors('surname')}" th:text="${error}">
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="status">Stato</label>
+                                            <select type="text" id="status" class="form-control" th:field="*{status}"
+                                                th:errorClass="is-invalid" required>
+                                                <option th:value="in_attesa">In attesa</option>
+                                                <option th:value="accettato">Accetta</option>
+                                                <option th:value="rifiutato">Rifiuta</option>
+                                            </select>
+
+                                            <div th:if="${#fields.hasErrors('status')}" class="invalid-feedback">
+                                                <ul>
+                                                    <li th:each="error : ${#fields.errors('status')}"
+                                                        th:text="${error}"></li>
+                                                </ul>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="annotation">Annotazioni (facoltative)</label>
+                                                <input type="text" id="annotation" class="form-control"
+                                                    th:field="*{annotation}" th:errorClass="is-invalid">
+
+                                                <div th:if="${#fields.hasErrors('annotation')}"
+                                                    class="invalid-feedback">
+                                                    <ul>
+                                                        <li th:each="error : ${#fields.errors('annotation')}"
+                                                            th:text="${error}">
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Salva</button>
+                                            </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Cognome</th>
+                    <th>Stato</th>
+                    <th>Annotazioni</th>
+                    <th>
+                </tr>
+            <tbody>
+                <tr th:each="invited : ${inviteds}" th:object="${invited}">
+                    <td th:text="*{id}"></td>
+                    <td th:text="*{name}"></td>
+                    <td th:text="*{surname}"></td>
+                    <td th:text="*{status}"></td>
+                    <td th:text="*{annotation}"></td>
+                    <td class="text-center">
+                        <a class="btn btn-secondary">Modifica </a>
+                        <butotn type="button" data-bs-toggle="modal" th:data-bs-target="'#delete-modal-' + *{id}"
+                            class="btn btn-warning">Elimina </button>
+
+                            <div class="modal fade" th:id="'delete-modal-' + *{id}" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Eliminare l'invitato:
+
+                                                <strong>"[[*{name}]]"</strong>
+
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>
+                                                Sei sicuro di voler eliminare l'invitato
+                                                <strong>[[*{name}]]</strong>
+                                                <strong>[[*{surname}]]</strong>?
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Chiudi</button>
+                                            <form th:action="@{|/invited/delete/*{id}|}" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-danger btn">Elimina</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                    </td>
+                </tr>
+            </tbody>
+
+            </thead>
+
+        </table>
+
+    </main>
+    <script th:replace="~{fragments/footer :: script}"></script>
+    <script th:if="${showModal}">
+        modalShow();
+    </script>
+
+</body>
+
+</html>
