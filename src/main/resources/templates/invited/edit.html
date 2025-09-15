@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<head th:replace="~{fragments/head :: head(Modifica)}">
+<head th:replace="~{fragments/head :: head('Modifica')}">
 
 <body>
     <main class="container mt-5 py-5">
@@ -53,10 +53,9 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Salva</button>
-                        </div>
+
+                        <button type="submit" class="btn btn-primary">Salva</button>
+
         </form>
     </main>
 

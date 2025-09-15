@@ -1,5 +1,33 @@
+function modalShow() {
+  let myModal = new bootstrap.Modal(document.getElementById("create"));
+  myModal.show();
+}
 
-function modalShow(){
-    var myModal = new bootstrap.Modal(document.getElementById('create'));
-    myModal.show();
+document.addEventListener("DOMContentLoaded", function () {
+  let fileInput = document.getElementById("fileInput");
+  fileInput.addEventListener("change", previewImages);
+});
+
+function previewImages(event) {
+  let preview = document.getElementById("preview");
+  preview.innerHTML = "";
+  let files = event.target.files;
+  let title = document.createElement("h4");
+   title.textContent = "Anteprima: ";
+    preview.appendChild(title);
+
+  for (let i = 0; i < files.length; i++) {
+    let reader = new FileReader();
+
+    reader.onload = (function () {
+      return function (e) {        
+        let img = document.createElement("img");   
+        img.src = e.target.result;
+        img.className = "img-preview"       
+        preview.appendChild(img);
+      };
+    })(files[i]);
+
+    reader.readAsDataURL(files[i]);
+  }
 }

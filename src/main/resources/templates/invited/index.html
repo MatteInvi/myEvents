@@ -106,41 +106,40 @@
                     <td class="d-none d-lg-table-cell" th:text="*{annotation}"></td>
                     <td class="text-center">
 
-                            <a class="btn btn-secondary" th:href="@{|/invited/edit/*{id}|}">Modifica </a>
-                            <butotn type="button" data-bs-toggle="modal" th:data-bs-target="'#delete-modal-' + *{id}"
-                                class="btn btn-warning">Elimina </button>
+                        <a class="btn btn-secondary" th:href="@{|/invited/edit/*{id}|}">Modifica </a>
+                        <butotn type="button" data-bs-toggle="modal" th:data-bs-target="'#delete-modal-' + *{id}"
+                            class="btn btn-warning">Elimina </button>
 
-                                <div class="modal fade" th:id="'delete-modal-' + *{id}" data-bs-backdrop="static"
-                                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Eliminare
-                                                    l'invitato:
+                            <div class="modal fade" th:id="'delete-modal-' + *{id}" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Eliminare
+                                                l'invitato:
 
-                                                    <strong>"[[*{name}]]"</strong>
+                                                <strong>"[[*{name}]]"</strong>
 
-                                            </div>
-                                            <div class="modal-body">
-                                                <p>
-                                                    Sei sicuro di voler eliminare l'invitato
-                                                    <strong>[[*{name}]]</strong>
-                                                    <strong>[[*{surname}]]</strong>?
-                                                </p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Chiudi</button>
-                                                <form th:action="@{|/invited/delete/*{id}|}" method="post"
-                                                    class="d-inline">
-                                                    <button type="submit" class="btn btn-danger btn">Elimina</button>
-                                                </form>
-                                            </div>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>
+                                                Sei sicuro di voler eliminare l'invitato
+                                                <strong>[[*{name}]]</strong>
+                                                <strong>[[*{surname}]]</strong>?
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Chiudi</button>
+                                            <form th:action="@{|/invited/delete/*{id}|}" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-danger btn">Elimina</button>
+                                            </form>
                                         </div>
                                     </div>
-
                                 </div>
+
+                            </div>
 
                     </td>
                 </tr>
