@@ -54,4 +54,19 @@ public class InvitedController {
         invitedRepository.delete(invited.get());
         return "redirect:/invited";
     }
+
+    @GetMapping("edit/{id}")
+    public String edit(Model model, @PathVariable Integer id){
+        model.addAttribute("invited", invitedRepository.findById(id).get());
+
+    return "invited/edit";
+     
+    }
+    @PostMapping("edit/{id}")
+    public String editStatus(@PathVariable Integer id, @Valid @ModelAttribute Invited formInvited, BindingResult bindingResult, Model model){
+        Optional<Invited> invited = invitedRepository.findById(id);
+        invitedRepository.save(invited.get());
+        return "redirect:/invited";
+
+    }
 }
