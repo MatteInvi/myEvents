@@ -6,7 +6,7 @@
 
 <body>
 
-    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <nav th:replace="~{fragments/navbar :: nav}"></nav>
 
     <main class="container mt-2 py-5">
         <h2 class="mt-3">Qui potrai caricare le tue foto</h2>
@@ -36,7 +36,7 @@
     </main>
 
 
-    <script th:replace="~{fragments/footer :: script}"></script>
+    <th:block th:replace="~{fragments/footer :: script}"></th:block>
 
 </body>
 

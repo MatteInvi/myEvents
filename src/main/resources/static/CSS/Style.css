@@ -22,3 +22,17 @@ body {
   object-fit: cover;
   margin: 10px;
 }
+
+.nav-item:hover{
+  color: black;
+}
+
+
+.navbar, .dropdown-menu{
+  background-image: linear-gradient(blueviolet,rgb(87, 10, 187) ,blueviolet);
+  box-shadow: 2px 2px 4px antiquewhite;
+
+}
+
+
+

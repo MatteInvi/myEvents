@@ -102,7 +102,10 @@
                     <td class="d-none d-lg-table-cell" th:text="*{id}"></td>
                     <td th:text="*{name}"></td>
                     <td th:text="*{surname}"></td>
-                    <td class="d-none d-lg-table-cell" th:text="*{status}"></td>
+                    <td th:if="*{status == 'rifiutato'}" class="d-none d-lg-table-cell bg-danger" th:text="*{status}"></td>
+                    <td th:if="*{status == 'accettato'}" class="d-none d-lg-table-cell bg-success" th:text="*{status}"></td>
+                    <td th:if="*{status == 'in_attesa'}" class="d-none d-lg-table-cell bg-warning" th:text="*{status}"></td>
+
                     <td class="d-none d-lg-table-cell" th:text="*{annotation}"></td>
                     <td class="text-center">
 

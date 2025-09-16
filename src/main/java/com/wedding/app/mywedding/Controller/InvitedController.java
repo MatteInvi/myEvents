@@ -34,7 +34,7 @@ public class InvitedController {
     }
 
     @PostMapping("/create")
-    public String store(@Valid @ModelAttribute Invited formInvited, BindingResult bindingResult, Model model) {
+    public String store(@Valid @ModelAttribute("invited") Invited formInvited, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("showModal", true);
@@ -48,7 +48,7 @@ public class InvitedController {
     }
 
     @PostMapping("delete/{id}")
-    public String delete(@PathVariable Integer id){
+    public String delete(@PathVariable Integer id) {
         Optional<Invited> invited = invitedRepository.findById(id);
 
         invitedRepository.delete(invited.get());
@@ -56,16 +56,21 @@ public class InvitedController {
     }
 
     @GetMapping("edit/{id}")
-    public String edit(Model model, @PathVariable Integer id){
+    public String edit( @PathVariable Integer id,Model model) {
         model.addAttribute("invited", invitedRepository.findById(id).get());
 
-    return "invited/edit";
-     
+        return "/invited/edit";
+
     }
+
     @PostMapping("edit/{id}")
-    public String editStatus(@PathVariable Integer id, @Valid @ModelAttribute Invited formInvited, BindingResult bindingResult, Model model){
-        Optional<Invited> invited = invitedRepository.findById(id);
-        invitedRepository.save(invited.get());
+    public String update(@PathVariable Integer id, @Valid @ModelAttribute("invited") Invited formInvited,
+            BindingResult bindingResult,  Model model) {
+        if (bindingResult.hasErrors()) {
+            return "invited/edit";
+        }
+
+        invitedRepository.save(formInvited);
         return "redirect:/invited";
 
     }
