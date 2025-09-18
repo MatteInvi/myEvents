@@ -12,6 +12,8 @@
         <h2 class="mt-3">Qui potrai caricare le tue foto</h2>
         <h5 th:if="${error}" class="text-danger" th:text="${error}"></h5>
         <h5 th:if="${success}" class="text-success" th:text="${success}"></h5>
+        
+        <!-- Sezione caricamento foto -->
 
         <form th:action="@{./upload}" method="post" enctype="multipart/form-data">
             <div class="mb-3">
@@ -21,17 +23,19 @@
 
             <button class="btn btn-primary" type="submit">Invia</button>
         </form>
-        <div class="preview-container d-block" id="preview">
+            <!-- Preview -->
+        <div class="preview-container d-block" id="preview"></div>
 
-        </div>
+        <!-- Sezione risultato caricamento -->
 
-        <div class="d-flex" th:if="${success}">
-            <p>Questo è il link per visualizzare le foto: &nbsp;
-            <div th:each="uploadedFile : ${uploadedFiles}" th:object="${uploadedFile}">
-                <a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
-                    th:href="*{url}" target="_blank">[[*{name}]]</a>
+        <div class="row" th:if="${success}">
+            <p th:if="${uploadedFiles.size > 1}" class="col-12">Questi sono i link per visualizzare le foto:</p>
+            <p th:unless="${uploadedFiles.size > 1}" class="col-12">Questo è il link per visualizzare la foto:</p>
+            <div class="col-12" th:each="uploadedFile : ${uploadedFiles}" th:object="${uploadedFile}">
+                <a class="link-primary link-underline-opacity-25 link-opacity-100-hover" th:href="*{url}"
+                    target="_blank">[[*{name}]]</a>
             </div>
-            </p>
+
         </div>
     </main>
 
@@ -39,8 +43,5 @@
     <th:block th:replace="~{fragments/footer :: script}"></th:block>
 
 </body>
-
-
-
 
 </html>

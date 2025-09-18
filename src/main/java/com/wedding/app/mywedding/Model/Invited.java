@@ -8,27 +8,25 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
-
 @Entity
 @Table(name = "invited")
 public class Invited {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank (message = "Inserire un nome")
+    @NotBlank(message = "Inserire un nome")
     public String name;
 
-    @NotBlank (message = "Inserire un cognome")
+    @NotBlank(message = "Inserire un cognome")
     public String surname;
 
-    @NotBlank (message = "Inserire lo stato")
+    @NotBlank(message = "Inserire lo stato")
     public String status;
 
     @Lob
     public String annotation;
-
 
     public String getAnnotation() {
         return this.annotation;
@@ -70,5 +68,4 @@ public class Invited {
         this.status = status;
     }
 
-    
 }

@@ -1,8 +1,11 @@
+
+// Funzione per mostrare la modale in caso di errore di inserimento dati
 function modalShow() {
   let myModal = new bootstrap.Modal(document.getElementById("create"));
   myModal.show();
 }
 
+// Sezione per mostrare antreprima delle foto da caricare
 document.addEventListener("DOMContentLoaded", function () {
   let fileInput = document.getElementById("fileInput");
   fileInput.addEventListener("change", previewImages);

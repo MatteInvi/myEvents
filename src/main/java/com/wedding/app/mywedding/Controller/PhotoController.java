@@ -21,6 +21,7 @@ import com.cloudinary.utils.ObjectUtils;
 @RequestMapping("/photo")
 public class PhotoController {
 
+    //Dichiarazione piattaforma su cui salvare foto
     private final Cloudinary cloudinary;
 
     public PhotoController(Cloudinary cloudinary) {
@@ -32,11 +33,13 @@ public class PhotoController {
         return "pages/photo";
     }
 
+    //Chiamata post per caricare foto
     @PostMapping("/upload")
     public String upload(@RequestParam MultipartFile[] files, Model model) {
 
         try {
-
+            //Creazione array per selezione di foto multiple, controllo che la selezione non sia vuota
+            //e in fine carico foto sulla piattaforma
             List<Map<String, Object>> upldodedFiles = new ArrayList<>();
 
             for (MultipartFile file : files) {
@@ -54,6 +57,8 @@ public class PhotoController {
 
             }
 
+            //Restituisco messaggio di avvenuto caricamento con i relativi dati
+            //altrimenti restituisco errore se non sono state selezionate foto
             if (upldodedFiles.size() > 0) {
                 model.addAttribute("success", "Caricamento avvenuto con successo!");
                 model.addAttribute("uploadedFiles", upldodedFiles);
@@ -64,6 +69,7 @@ public class PhotoController {
 
             }
 
+        // Se il blocco precedente non viene caricare viene mostrato un errore con il relativo messaggio        
         } catch (IOException e) {
             model.addAttribute("error", "Errore caricamento " + e.getMessage());
 
