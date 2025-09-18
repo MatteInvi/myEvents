@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -22,11 +23,24 @@ public class Invited {
     @NotBlank(message = "Inserire un cognome")
     public String surname;
 
+    @Email
+    public String email;
+
     @NotBlank(message = "Inserire lo stato")
     public String status;
 
     @Lob
     public String annotation;
+
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
 
     public String getAnnotation() {
         return this.annotation;

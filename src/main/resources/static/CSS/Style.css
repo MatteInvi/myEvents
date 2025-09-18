@@ -34,5 +34,36 @@ body {
 
 }
 
+.scrolling{
+  overflow: auto;
+}
+
+.status-badge{
+  width: fit-content;
+  padding: 3px;
+  border-radius: 5px;
+  color: white;
+}
+
+.accepted{
+  background-color: green;
+}
+
+.rejected{
+  background-color: red;
+}
+
+.waiting{
+  background-color: orange;
+}
+
+.cell-content{
+   max-height: 50px;
+}
+
+.buttons{
+  width: 200px;
+}
+
 
 

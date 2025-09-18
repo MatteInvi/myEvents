@@ -25,7 +25,12 @@ import jakarta.validation.Valid;
 public class InvitedController {
 
     @Autowired
+    EmailService emailService;
+
+    @Autowired
     InvitedRepository invitedRepository;
+
+
 
     //Indice invitati con creazione nuovo inviato nel momento in cui si prema il bottone in pagina
     @GetMapping
@@ -53,7 +58,8 @@ public class InvitedController {
             model.addAttribute("inviteds", invitedRepository.findAll());
             return "invited/index";
         }
-
+    
+        emailService.sendEmail(formInvited.email);      
         invitedRepository.save(formInvited);
         return "redirect:/invited";
 
