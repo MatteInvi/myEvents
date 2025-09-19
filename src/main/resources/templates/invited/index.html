@@ -149,11 +149,13 @@
                     <td class="d-none d-lg-table-cell">
                         <p class="overflow-auto cell-content" th:text="*{annotation}"></p>
                     </td>
-                    <td class="text-center buttons">
+                    <td class="text-center">
 
                         <a class="btn btn-secondary" th:href="@{|/invited/edit/*{id}|}">Modifica </a>
-                        <butotn type="button" data-bs-toggle="modal" th:data-bs-target="'#delete-modal-' + *{id}"
+                        <a class="btn btn-secondary" th:href="@{|/invited/editStato/*{id}|}">Modifica stato </a>
+                        <button type="button" data-bs-toggle="modal" th:data-bs-target="'#delete-modal-' + *{id}"
                             class="btn btn-warning">Elimina </button>
+                    </td>
 
                             <div class="modal fade" th:id="'delete-modal-' + *{id}" data-bs-backdrop="static"
                                 data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
@@ -184,7 +186,7 @@
 
                             </div>
 
-                    </td>
+                    
                 </tr>
             </tbody>
 

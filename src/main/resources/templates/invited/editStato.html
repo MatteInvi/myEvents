@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments/head :: head('Modifica')}"></head>
+
+<body>
+    <main class="container w-50 mt-5 py-5">
+       
+        <div th:if="${success}">
+            <h4 class="text-success">[[${success}]]</h4>
+        </div>
+        
+        <form  th:action="@{|/invited/editStato/*{id}|}" th:object="${invited}" method="post">
+            <div class="mb-3">
+                <input type="hidden" th:field="*{id}">
+                <label for="name">Nome</label>
+                <input type="text" id="name" class="form-control" th:field="*{name}" th:errorClass="is-invalid" readonly>
+
+                <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback">
+                    <ul>
+                        <li th:each="error : ${#fields.errors('name')}" th:text="${error}"></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="surnname">Cognome</label>
+                <input type="text" id="surname" class="form-control" th:field="*{surname}" th:errorClass="is-invalid"  readonly>
+
+                <div th:if="${#fields.hasErrors('surname')}" class="invalid-feedback">
+                    <ul>
+                        <li th:each="error : ${#fields.errors('surname')}" th:text="${error}">
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="email">Email</label>
+                <input type="text" id="email" class="form-control" th:field="*{email}" th:errorClass="is-invalid"  readonly>
+
+                <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback">
+                    <ul>
+                        <li th:each="error : ${#fields.errors('email')}" th:text="${error}">
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="status">Stato</label>
+                <select type="text" id="status" class="form-select" th:field="*{status}" th:errorClass="is-invalid"
+                    required>
+                    <option th:value="accettato">Accetta</option>
+                    <option th:value="rifiutato">Rifiuta</option>
+                </select>
+
+                <div th:if="${#fields.hasErrors('status')}" class="invalid-feedback">
+                    <ul>
+                        <li th:each="error : ${#fields.errors('status')}" th:text="${error}"></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="annotation">Annotazioni (facoltative)</label>
+                <input type="text" id="annotation" class="form-control" th:field="*{annotation}"
+                    th:errorClass="is-invalid">
+
+                <div th:if="${#fields.hasErrors('annotation')}" class="invalid-feedback">
+                    <ul>
+                        <li th:each="error : ${#fields.errors('annotation')}" th:text="${error}">
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Salva</button>
+
+        </form>
+       
+    </main>
+
+    <footer th:replace="~{fragments/footer :: script}"></footer>
+
+</body>
+
+</html>

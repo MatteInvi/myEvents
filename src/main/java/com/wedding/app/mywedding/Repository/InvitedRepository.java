@@ -9,5 +9,6 @@ import com.wedding.app.mywedding.Model.Invited;
 public interface InvitedRepository extends JpaRepository<Invited, Integer> {
 
     public List<Invited> findByNameIgnoreCase(String name);
+    public boolean existsByEmail(String email);
     
 }
