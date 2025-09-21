@@ -7,6 +7,7 @@
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
     <main class="container mt-5 py-5">
+        <div th:if="${sendSuccess}"><p class="text-success text-center"><strong>Email inviata con successo!</strong></p></div>
         <h2 class="text-center">Lista invitati</h2>
         <div class="row justify-content-between" id="table-strument">
             <section id="adding_invited" class="my-3 col-4">
@@ -16,7 +17,7 @@
                 </button>
 
 
-                <!-- Modale -->
+                <!-- Modale creazione invitato -->
                 <div class="modal fade" id="create" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -95,7 +96,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">Close</button>
@@ -128,7 +129,7 @@
                     <th>Cognome</th>
                     <th class="d-none d-lg-table-cell">Stato</th>
                     <th class="d-none d-lg-table-cell">Annotazioni</th>
-                    <th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -151,42 +152,48 @@
                     </td>
                     <td class="text-center">
 
+                    <!-- Sezione pulsanti  -->
                         <a class="btn btn-secondary" th:href="@{|/invited/edit/*{id}|}">Modifica </a>
-                        <a class="btn btn-secondary" th:href="@{|/invited/editStato/*{id}|}">Modifica stato </a>
+
+                        <form method="post" class="d-inline" th:action="@{|/invited/email/send/*{id}|}">
+                            <button type="submit" class="btn btn-primary">Invia invito</button>
+                        </form>
+
+                       
+
                         <button type="button" data-bs-toggle="modal" th:data-bs-target="'#delete-modal-' + *{id}"
                             class="btn btn-warning">Elimina </button>
                     </td>
 
-                            <div class="modal fade" th:id="'delete-modal-' + *{id}" data-bs-backdrop="static"
-                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                                aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Eliminare
-                                                l'invitato:
-                                                <strong>"[[*{name}]]"</strong>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>
-                                                Sei sicuro di voler eliminare l'invitato
-                                                <strong>[[*{name}]]</strong>
-                                                <strong>[[*{surname}]]</strong>?
-                                            </p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Chiudi</button>
-                                            <form th:action="@{|/invited/delete/*{id}|}" method="post" class="d-inline">
-                                                <button type="submit" class="btn btn-danger btn">Elimina</button>
-                                            </form>
-                                        </div>
-                                    </div>
+                    <div class="modal fade" th:id="'delete-modal-' + *{id}" data-bs-backdrop="static"
+                        data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Eliminare
+                                        l'invitato:
+                                        <strong>"[[*{name}]]"</strong>
                                 </div>
-
+                                <div class="modal-body">
+                                    <p>
+                                        Sei sicuro di voler eliminare l'invitato
+                                        <strong>[[*{name}]]</strong>
+                                        <strong>[[*{surname}]]</strong>?
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Chiudi</button>
+                                    <form th:action="@{|/invited/delete/*{id}|}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-danger btn">Elimina</button>
+                                    </form>
+                                </div>
                             </div>
+                        </div>
 
-                    
+                    </div>
+
+
                 </tr>
             </tbody>
 

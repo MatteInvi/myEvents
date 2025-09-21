@@ -5,7 +5,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.wedding.app.mywedding.Model.User;
+import com.wedding.app.mywedding.Model.Invited;
 
 import jakarta.mail.internet.MimeMessage;
 
@@ -15,7 +15,7 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendEmail(String to, User credential) {
+    public void sendEmail(String to, Invited invited) {
             try{
              MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -26,12 +26,10 @@ public class EmailService {
                     <html>
                       <body style="font-family: Arial, sans-serif;">
                         <h1 style="color:#2e6c80;">Sei invitato al nostro matrimonio!</h1>
-                        <p>Qui trovarai i dati per accedere alla nostra piattaforma</p>
-                        <p>Username: <strong>%s</strong></p>
-                        <p>Passowrd: <strong>%s</strong></p>
+                        <p>Ciao <strong>%s</strong> <strong>%s</strong> sei invitato... </p>
                      </body>
                     </html>
-                    """, credential.getUsername(), credential.getPassword());
+                    """, invited.getName(), invited.getSurname());
 
             helper.setText(html, true);
 

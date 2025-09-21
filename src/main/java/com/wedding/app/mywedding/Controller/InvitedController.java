@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wedding.app.mywedding.Model.Invited;
 import com.wedding.app.mywedding.Model.Role;
@@ -62,8 +63,7 @@ public class InvitedController {
     // Chiamata post con validazione per creazione invitati
     @PostMapping("/create")
     public String store(@Valid @ModelAttribute("invited") Invited formInvited,
-            BindingResult bindingResult, @ModelAttribute("users") User formUser,
-            Model model) {
+            BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("showModal", true);
@@ -85,17 +85,17 @@ public class InvitedController {
                 roles.add(role);
             }
         }
-        formUser.setUsername(formInvited.getEmail());
-        formUser.setPassword(PasswordGenerator.generateRandomPassword(8));
-        formUser.setRoles(roles);
-
-        // Invio mail con destinatario (da form) e dati per accesso
-        emailService.sendEmail(formInvited.email, formUser);           
-        
-        userRepository.save(formUser);
         invitedRepository.save(formInvited);
         return "redirect:/invited";
 
+    }
+
+    @PostMapping("/email/send/{id}")
+    public String emailSend(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes){
+        Optional<Invited> invited = invitedRepository.findById(id);
+        emailService.sendEmail(invited.get().getEmail(), invited.get());
+        redirectAttributes.addFlashAttribute("sendSuccess", true);      
+        return "redirect:/invited";
     }
 
     // Chiamata post per eliminazione invitati
