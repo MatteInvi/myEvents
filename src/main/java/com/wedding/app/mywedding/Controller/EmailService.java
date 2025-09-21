@@ -12,32 +12,49 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+  @Autowired
+  private JavaMailSender mailSender;
 
-    public void sendEmail(String to, Invited invited) {
-            try{
-             MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            
-            helper.setTo(to);
-            helper.setSubject("Partecipazione matrimonio");
-            String html = String.format("""
-                    <html>
-                      <body style="font-family: Arial, sans-serif;">
-                        <h1 style="color:#2e6c80;">Sei invitato al nostro matrimonio!</h1>
-                        <p>Ciao <strong>%s</strong> <strong>%s</strong> sei invitato... </p>
-                     </body>
-                    </html>
-                    """, invited.getName(), invited.getSurname());
+  public void sendEmail(String to, Invited invited) {
+    try {
+      MimeMessage message = mailSender.createMimeMessage();
+      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setText(html, true);
+      helper.setTo(to);
+      helper.setSubject("Partecipazione matrimonio");
+      String html = String.format("""
+          <html>
+            <body style="font-family: Arial, sans-serif;">
+              <h1 style="color:#2e6c80;">Sei invitato al nostro matrimonio!</h1>
+              <p>Ciao <strong>%s</strong> <strong>%s</strong> sei invitato... </p>
+           </body>
+          </html>
+          """, invited.getName(), invited.getSurname());
 
+      helper.setText(html, true);
 
+      mailSender.send(message);
+    } catch (Exception e) {
 
-            mailSender.send(message);
-        } catch(Exception e){
-
-        }
     }
+  }
+
+  public void registerEmail(String to, String content) {
+    try {
+      MimeMessage message = mailSender.createMimeMessage();
+      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+      helper.setTo(to);
+      helper.setSubject("");
+      String html = String.format("""
+
+          """);
+
+      helper.setText(html, true);
+
+      mailSender.send(message);
+    } catch (Exception e) {
+
+    }
+  }
 }
