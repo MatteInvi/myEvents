@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -21,15 +22,32 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "L'username non può essere vuoto")
-    private String username;
+    @NotBlank(message = "L' username non può essere vuoto")
+    @Email
+    private String email;
 
-    @NotBlank(message = "Inserisci una passowrd")
+    @NotBlank(message = "Inserisci una password")
     private String password;
 
     @ManyToMany (fetch = FetchType.EAGER)
     @JoinTable(name = "role_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name="role_id"))
     private Set<Role> roles;
+
+    private boolean verified = false;
+    
+
+    public boolean isVerified() {
+        return this.verified;
+    }
+
+    public boolean getVerified() {
+        return this.verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
+
 
 
     public Set<Role> getRoles() {
@@ -49,12 +67,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return this.username;
+    public String getEmail() {
+        return this.email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

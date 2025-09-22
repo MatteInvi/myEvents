@@ -18,9 +18,8 @@ public class SecurityConfiguration {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests(requests -> requests
-                .requestMatchers("/css/**", "/img/**","/js/**").permitAll()
-                .requestMatchers("/").permitAll()
-                .requestMatchers("/**").hasAuthority("ADMIN"))
+                .requestMatchers("/css/**", "/img/**","/js/**", "/register", "/register/confirm/**").permitAll()
+                .requestMatchers("/").permitAll())
                 .formLogin(form -> form
                     .loginPage("/login")
                     .defaultSuccessUrl("/", true)

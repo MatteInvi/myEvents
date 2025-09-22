@@ -20,11 +20,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wedding.app.mywedding.Model.Invited;
 import com.wedding.app.mywedding.Model.Role;
-import com.wedding.app.mywedding.Model.User;
 import com.wedding.app.mywedding.Repository.InvitedRepository;
 import com.wedding.app.mywedding.Repository.RoleRepository;
 import com.wedding.app.mywedding.Repository.UserRepository;
-import com.wedding.app.mywedding.Utility.PasswordGenerator;
+import com.wedding.app.mywedding.Service.EmailService;
 import jakarta.validation.Valid;
 
 @Controller

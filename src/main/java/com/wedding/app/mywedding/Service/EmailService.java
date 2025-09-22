@@ -1,4 +1,4 @@
-package com.wedding.app.mywedding.Controller;
+package com.wedding.app.mywedding.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -6,6 +6,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.wedding.app.mywedding.Model.Invited;
+import com.wedding.app.mywedding.Model.User;
+import com.wedding.app.mywedding.Model.authToken;
 
 import jakarta.mail.internet.MimeMessage;
 
@@ -39,16 +41,24 @@ public class EmailService {
     }
   }
 
-  public void registerEmail(String to, String content) {
+  public void registerEmail(User user, authToken token) {
     try {
       MimeMessage message = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+      String confimationURL = "http://localhost:8080/register/confirm?token=" + token;
 
-      helper.setTo(to);
-      helper.setSubject("");
+      helper.setTo(user.getEmail());
+      helper.setSubject("Conferma registrazione");
       String html = String.format("""
+        <html>
+          <body>
+            <h1>Conferma la tua registrazione</h1>
+            <p>Clicca sul seguente link per confermare la registrazione a my weddingApp</p>
+            <a>%S</a>
+          </body>
+        </html>
 
-          """);
+          """, confimationURL);
 
       helper.setText(html, true);
 
