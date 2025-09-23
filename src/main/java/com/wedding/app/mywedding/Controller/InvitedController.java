@@ -1,12 +1,12 @@
 package com.wedding.app.mywedding.Controller;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wedding.app.mywedding.Model.Invited;
-import com.wedding.app.mywedding.Model.Role;
+import com.wedding.app.mywedding.Model.User;
 import com.wedding.app.mywedding.Repository.InvitedRepository;
 import com.wedding.app.mywedding.Repository.RoleRepository;
 import com.wedding.app.mywedding.Repository.UserRepository;
@@ -45,16 +45,29 @@ public class InvitedController {
     // Indice invitati con creazione nuovo inviato nel momento in cui si prema il
     // bottone in pagina
     @GetMapping
-    public String index(Model model, @RequestParam(required = false) String search) {
+    public String index(Model model, @RequestParam(required = false) String search, Authentication authentication) {
+        Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
         Invited invited = new Invited();
         model.addAttribute("invited", invited);
         List<Invited> inviteds = new ArrayList<>();
-        if (search != null && !search.isEmpty()) {
-            inviteds = invitedRepository.findByNameIgnoreCase(search);
-        } else {
-            inviteds = invitedRepository.findAll();
-            model.addAttribute("inviteds", inviteds);
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            if (grantedAuthority.getAuthority().equals("ADMIN")) {
+                if (search != null && !search.isEmpty()) {
+                    inviteds = invitedRepository.findByNameIgnoreCase(search);
+                } else {
+                    inviteds = invitedRepository.findAll();
+
+                }
+            } else if (grantedAuthority.getAuthority().equals("USER")) {
+                List<Invited> userInvited = invitedRepository.findByUser(userLogged.get());
+                for (Invited singleInvited : userInvited) {
+                    inviteds.add(singleInvited);
+                }
+
+            }
         }
+
+        model.addAttribute("inviteds", inviteds);
 
         return "invited/index";
     }
@@ -62,8 +75,8 @@ public class InvitedController {
     // Chiamata post con validazione per creazione invitati
     @PostMapping("/create")
     public String store(@Valid @ModelAttribute("invited") Invited formInvited,
-            BindingResult bindingResult, Model model) {
-
+            BindingResult bindingResult, Model model, Authentication authentication) {
+        Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
         if (bindingResult.hasErrors()) {
             model.addAttribute("showModal", true);
             model.addAttribute("inviteds", invitedRepository.findAll());
@@ -78,76 +91,71 @@ public class InvitedController {
 
         }
 
-        Set<Role> roles = new HashSet<>();
-        for (Role role : roleRepository.findAll()) {
-            if (role.getId() == 2) {
-                roles.add(role);
-            }
-        }
+        formInvited.setUser(userLogged.get());
         invitedRepository.save(formInvited);
         return "redirect:/invited";
 
     }
 
     @PostMapping("/email/send/{id}")
-    public String emailSend(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes){
+    public String emailSend(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Invited> invited = invitedRepository.findById(id);
-        emailService.sendEmail(invited.get().getEmail(), invited.get());
-        redirectAttributes.addFlashAttribute("sendSuccess", true);      
-        return "redirect:/invited";
-    }
-
-    // Chiamata post per eliminazione invitati
-    @PostMapping("delete/{id}")
-    public String delete(@PathVariable Integer id) {
-        Optional<Invited> invited = invitedRepository.findById(id);
-
-        invitedRepository.delete(invited.get());
+        try {
+            emailService.sendEmail(invited.get().getEmail(), invited.get());
+        } catch (Exception e) {
+            model.addAttribute("message", "Errore nell'invio: " + e);
+        }
+        redirectAttributes.addFlashAttribute("message", "Email inviata con successo!");
         return "redirect:/invited";
     }
 
     // Get per reindirizzare su modifica dati invitato
     @GetMapping("edit/{id}")
-    public String edit(@PathVariable Integer id, Model model) {
-        model.addAttribute("invited", invitedRepository.findById(id).get());
+    public String edit(@PathVariable Integer id, Model model, Authentication authentication) {
+        Optional<User> loggedUser = userRepository.findByEmail(authentication.getName());
+        Optional<Invited> singleInvited = invitedRepository.findById(id);
+        // Controllo che l'invitato si assegnato a questo utente (Se sei admin puoi
+        // accedere sempre)
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            if ((grantedAuthority.getAuthority().equals("ADMIN"))
+                    || singleInvited.get().getUser() == loggedUser.get()) {
+                model.addAttribute("invited", invitedRepository.findById(id).get());
+            }
+        }
 
         return "/invited/edit";
 
-    }
-
-    // Get per far editare lo stato al singolo utente
-    @GetMapping("editStato/{id}")
-    public String editStato(@PathVariable Integer id, Model model) {
-        model.addAttribute("invited", invitedRepository.findById(id).get());
-
-        return "invited/editStato";
-    }
-
-    // Post per modificare il solo stato
-    @PostMapping("editStato/{id}")
-    public String updateStato(@PathVariable Integer id, @Valid @ModelAttribute("invited") Invited formInvited,
-            BindingResult bindingResult, Model model) {
-
-        if (bindingResult.hasErrors()) {
-            return "invited/editStato";
-        }
-
-        model.addAttribute("success", "Stato modificato con successo");
-        invitedRepository.save(formInvited);
-
-        return "invited/editStato";
     }
 
     // Post per validare e modificare dati invitato
     @PostMapping("edit/{id}")
     public String update(@PathVariable Integer id, @Valid @ModelAttribute("invited") Invited formInvited,
             BindingResult bindingResult, Model model) {
+
+        Invited invited = invitedRepository.findById(id).get();
         if (bindingResult.hasErrors()) {
             return "invited/edit";
         }
 
+        formInvited.setUser(invited.getUser());
         invitedRepository.save(formInvited);
         return "redirect:/invited";
 
+    }
+
+    // Chiamata post per eliminazione invitati
+    @PostMapping("delete/{id}")
+    public String delete(@PathVariable Integer id, Authentication authentication) {
+        Optional<Invited> singleInvited = invitedRepository.findById(id);
+        Optional<User> loggedUser = userRepository.findByEmail(authentication.getName());
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            if ((grantedAuthority.getAuthority().equals("ADMIN"))
+                    || singleInvited.get().getUser() == loggedUser.get()) {
+                invitedRepository.delete(singleInvited.get());
+
+            }
+        }
+
+        return "redirect:/invited";
     }
 }

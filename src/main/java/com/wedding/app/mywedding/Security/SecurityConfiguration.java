@@ -2,6 +2,7 @@ package com.wedding.app.mywedding.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,8 +19,11 @@ public class SecurityConfiguration {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests(requests -> requests
-                .requestMatchers("/css/**", "/img/**","/js/**", "/register", "/register/confirm/**").permitAll()
-                .requestMatchers("/**").permitAll())
+                .requestMatchers("/", "/css/**", "/img/**","/js/**", "/register", "/register/confirm/**").permitAll()
+                .requestMatchers( "/invited/**", "/photo/**").hasAnyAuthority("ADMIN", "USER")
+                .requestMatchers(HttpMethod.POST, "/invited/**", "/photo/**").hasAnyAuthority("ADMIN", "USER")
+        
+                )
                 .formLogin(form -> form
                     .loginPage("/login")
                     .defaultSuccessUrl("/", true)

@@ -4,7 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -18,19 +20,33 @@ public class Invited {
     private Integer id;
 
     @NotBlank(message = "Inserire un nome")
-    public String name;
+    private String name;
 
     @NotBlank(message = "Inserire un cognome")
-    public String surname;
+    private String surname;
 
     @Email
-    public String email;
+    private String email;
 
     @NotBlank(message = "Inserire lo stato")
-    public String status;
+    private String status;
 
     @Lob
-    public String annotation;
+    private String annotation;
+
+    @ManyToOne
+    @JoinColumn(name ="user_id", nullable = false)
+    private User user;
+
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 
 
     public String getEmail() {

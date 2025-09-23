@@ -1,5 +1,6 @@
 package com.wedding.app.mywedding.Model;
 
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.Entity;
@@ -10,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -34,9 +36,22 @@ public class User {
     @JoinTable(name = "role_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name="role_id"))
     private Set<Role> roles;
 
+    @OneToMany(mappedBy = "user")
+    private List<Invited> invited;
+
 
     @OneToOne(mappedBy = "user")
     private authToken authToken;
+
+
+    public List<Invited> getInvited() {
+        return this.invited;
+    }
+
+    public void setInvited(List<Invited> invited) {
+        this.invited = invited;
+    }
+
 
 
     public authToken getAuthToken() {

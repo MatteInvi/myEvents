@@ -7,7 +7,7 @@
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
     <main class="container mt-5 py-5">
-        <div th:if="${sendSuccess}"><p class="text-success text-center"><strong>Email inviata con successo!</strong></p></div>
+        <div th:text="${message}"><p class="text-success text-center"><strong></strong></p></div>
         <h2 class="text-center">Lista invitati</h2>
         <div class="row justify-content-between" id="table-strument">
             <section id="adding_invited" class="my-3 col-4">

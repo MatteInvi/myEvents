@@ -2,6 +2,7 @@ package com.wedding.app.mywedding.Controller;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.wedding.app.mywedding.Model.Role;
 import com.wedding.app.mywedding.Model.User;
 import com.wedding.app.mywedding.Model.authToken;
+import com.wedding.app.mywedding.Repository.RoleRepository;
 import com.wedding.app.mywedding.Repository.TokenRepository;
 import com.wedding.app.mywedding.Repository.UserRepository;
 import com.wedding.app.mywedding.Service.EmailService;
@@ -26,6 +29,9 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/register")
 public class RegistrerController {
+
+    @Autowired
+    RoleRepository roleRepository;
 
     @Autowired
     EmailService emailService;
@@ -38,6 +44,8 @@ public class RegistrerController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+
 
     @GetMapping
     public String register(Model model) {
@@ -59,6 +67,16 @@ public class RegistrerController {
             return "utenti/register";
         }
 
+        //Individuo e setto il ruolo di utente per tutti i nuovi registrati
+        Role userRole = new Role();       
+        for (Role role : roleRepository.findAll()) {
+            if (role.getNome().equals("USER")){
+                userRole = role;
+            }            
+        }
+        formUser.setRoles(Set.of(userRole));
+        
+        //Setto password Encoder e salvo utente nel db
         formUser.setPassword(passwordEncoder.encode(formUser.getPassword()));
         userRepository.save(formUser);
 
@@ -77,8 +95,10 @@ public class RegistrerController {
 
         // Inviamo mail all'utente passando i dati del form compilato(per recuparare la
         // mail) e il token generato
-        emailService.registerEmail(formUser, authToken);
-
+        try {emailService.registerEmail(formUser, authToken);
+        } catch (Exception e) {
+            model.addAttribute("message", "Errore nell'invio:" + e);
+        }
         return "redirect:/";
 
     }

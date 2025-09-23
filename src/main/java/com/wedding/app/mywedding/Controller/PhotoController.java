@@ -28,7 +28,7 @@ public class PhotoController {
         this.cloudinary = cloudinary;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public String Homepage() {
         return "pages/photo";
     }

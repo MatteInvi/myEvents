@@ -17,7 +17,7 @@ public class EmailService {
   @Autowired
   private JavaMailSender mailSender;
 
-  public void sendEmail(String to, Invited invited) {
+  public void sendEmail(String to, Invited invited) throws Exception {
     try {
       MimeMessage message = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -41,7 +41,7 @@ public class EmailService {
     }
   }
 
-  public void registerEmail(User user, authToken token) {
+  public void registerEmail(User user, authToken token) throws Exception {
     try {
       MimeMessage message = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
