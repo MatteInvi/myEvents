@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,7 +19,7 @@ public class SecurityConfiguration {
 
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/css/**", "/img/**","/js/**", "/register", "/register/confirm/**").permitAll()
-                .requestMatchers("/").permitAll())
+                .requestMatchers("/**").permitAll())
                 .formLogin(form -> form
                     .loginPage("/login")
                     .defaultSuccessUrl("/", true)
@@ -45,7 +45,8 @@ public class SecurityConfiguration {
 
     @Bean
     PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return new BCryptPasswordEncoder();
+
     }
 
 }

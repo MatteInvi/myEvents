@@ -6,13 +6,13 @@
 <body class="">
 
     <section th:insert="~{fragments/navbar :: navbar}"></section>
-    <main class="container">
-        <div class="d-flex justify-content-center mt-3">
-            <form class="col-4" th:action="@{/login}" method="POST" autocomplete="off">
+    <main class="container w-50">
+        <div class="d-flex justify-content-center py-3 mt-3">
+            <form class="col" th:action="@{/login}" method="POST" autocomplete="off">
                 <h2 class="text-center">Accedi</h2>
                 <div class="col">
-                    <label class="form-label" for="username">Username:</label>
-                    <input type="text" name="username" id="username" class="form-control">
+                    <label class="form-label" for="username">Email:</label>
+                    <input type="email" name="username" id="username" class="form-control">
                 </div>
                 <div class="col">
                     <label class="form-label" for="password">Password:</label>

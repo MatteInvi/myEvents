@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -22,7 +23,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "L' username non può essere vuoto")
+    @NotBlank(message = "La mail non può essere vuota")
     @Email
     private String email;
 
@@ -32,6 +33,20 @@ public class User {
     @ManyToMany (fetch = FetchType.EAGER)
     @JoinTable(name = "role_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name="role_id"))
     private Set<Role> roles;
+
+
+    @OneToOne(mappedBy = "user")
+    private authToken authToken;
+
+
+    public authToken getAuthToken() {
+        return this.authToken;
+    }
+
+    public void setAuthToken(authToken authToken) {
+        this.authToken = authToken;
+    }
+
 
     private boolean verified = false;
     

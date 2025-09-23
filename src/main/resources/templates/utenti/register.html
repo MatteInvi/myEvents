@@ -4,7 +4,10 @@
 <head th:replace="~{fragments/head :: head('Modifica')}"></head>
 
 <body>
-    <main class="container mt-5 py-5">
+    <nav th:replace="~{fragments/navbar :: nav}"></nav>
+
+    <main class="container mt-3 py-3 w-50">
+        <h1 class="text-center">Registrazione</h1>
         <form th:action="@{|/register|}" th:object="${user}" method="post">
             <div class="mb-3">
                 <label for="email">Email</label>
@@ -16,7 +19,7 @@
                     </ul>
                 </div>
             </div>
-            
+
             <div class="mb-3">
                 <label for="password">Password</label>
                 <input type="text" id="password" class="form-control" th:field="*{password}" th:errorClass="is-invalid">

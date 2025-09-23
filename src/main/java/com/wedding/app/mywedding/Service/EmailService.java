@@ -45,7 +45,7 @@ public class EmailService {
     try {
       MimeMessage message = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-      String confimationURL = "http://localhost:8080/register/confirm?token=" + token;
+      String confimationURL = "http://localhost:8080/register/confirm?token=" + token.getToken();
 
       helper.setTo(user.getEmail());
       helper.setSubject("Conferma registrazione");
@@ -54,7 +54,7 @@ public class EmailService {
           <body>
             <h1>Conferma la tua registrazione</h1>
             <p>Clicca sul seguente link per confermare la registrazione a my weddingApp</p>
-            <a>%S</a>
+            <a style="background-color: blue; border: 1px solid black; border-radius: 20%%;" href="%s">Link</a>
           </body>
         </html>
 
@@ -64,7 +64,7 @@ public class EmailService {
 
       mailSender.send(message);
     } catch (Exception e) {
-
+      System.err.println(e);
     }
   }
 }
