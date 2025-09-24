@@ -7,115 +7,23 @@
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
     <main class="container mt-5 py-5">
-        <div th:text="${message}"><p class="text-success text-center"><strong></strong></p></div>
+        <div th:text="${message}">
+            <p class="text-success text-center"><strong></strong></p>
+        </div>
         <h2 class="text-center">Lista invitati</h2>
-        <div class="row justify-content-between" id="table-strument">
-            <section id="adding_invited" class="my-3 col-4">
-                <!-- Bottone per aprire la modala di creazione -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create">
-                    Aggiungi invitato
-                </button>
-
-
-                <!-- Modale creazione invitato -->
-                <div class="modal fade" id="create" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Dati invitato:</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form th:action="@{/invited/create}" th:object="${invited}" method="post">
-                                    <div class="mb-3">
-                                        <label for="name">Nome</label>
-                                        <input type="text" id="name" class="form-control" th:field="*{name}"
-                                            th:errorClass="is-invalid">
-
-                                        <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback">
-                                            <ul>
-                                                <li th:each="error : ${#fields.errors('name')}" th:text="${error}"></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="surnname">Cognome</label>
-                                        <input type="text" id="surname" class="form-control" th:field="*{surname}"
-                                            th:errorClass="is-invalid">
-
-                                        <div th:if="${#fields.hasErrors('surname')}" class="invalid-feedback">
-                                            <ul>
-                                                <li th:each="error : ${#fields.errors('surname')}" th:text="${error}">
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="email">Email</label>
-                                        <input type="text" id="email" class="form-control" th:field="*{email}"
-                                            th:errorClass="is-invalid">
-
-                                        <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback">
-                                            <ul>
-                                                <li th:each="error : ${#fields.errors('email')}" th:text="${error}">
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="status">Stato</label>
-                                        <select type="text" id="status" class="form-select" th:field="*{status}"
-                                            th:errorClass="is-invalid" required>
-                                            <option th:value="in_attesa">In attesa</option>
-                                            <option th:value="accettato">Accetta</option>
-                                            <option th:value="rifiutato">Rifiuta</option>
-                                        </select>
-
-                                        <div th:if="${#fields.hasErrors('status')}" class="invalid-feedback">
-                                            <ul>
-                                                <li th:each="error : ${#fields.errors('status')}" th:text="${error}">
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="annotation">Annotazioni (facoltative)</label>
-                                        <input type="text" id="annotation" class="form-control" th:field="*{annotation}"
-                                            th:errorClass="is-invalid">
-
-                                        <div th:if="${#fields.hasErrors('annotation')}" class="invalid-feedback">
-                                            <ul>
-                                                <li th:each="error : ${#fields.errors('annotation')}"
-                                                    th:text="${error}">
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Salva</button>
-                                    </div>
-                                </form>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <div class="row justify-content-between my-2" id="table-strument">
+            <a type="button" th:href="@{|/invited/create|}" class="btn btn-primary col-3 mx-3">
+                Aggiungi invitato
+            </a>
 
             <!-- Sezione di ricerca per nome -->
-            <section id="search" class="my-3 col-4">
+            <section id="search" class="col-3">
                 <form class="d-flex" role="search">
+                    <div class="search-input">
                     <input class="form-control me-2" type="search" placeholder="Search" name="search"
-                        aria-label="Search" />
-                    <button class="btn btn-success" type="submit">Search</button>
+                       />
+                    </div>
+                        <button class="btn btn-success" type="submit">Search</button>
                 </form>
             </section>
         </div>
@@ -152,14 +60,14 @@
                     </td>
                     <td class="text-center">
 
-                    <!-- Sezione pulsanti  -->
+                        <!-- Sezione pulsanti  -->
                         <a class="btn btn-secondary" th:href="@{|/invited/edit/*{id}|}">Modifica </a>
 
                         <form method="post" class="d-inline" th:action="@{|/invited/email/send/*{id}|}">
                             <button type="submit" class="btn btn-primary">Invia invito</button>
                         </form>
 
-                       
+
 
                         <button type="button" data-bs-toggle="modal" th:data-bs-target="'#delete-modal-' + *{id}"
                             class="btn btn-warning">Elimina </button>

@@ -47,8 +47,6 @@ public class InvitedController {
     @GetMapping
     public String index(Model model, @RequestParam(required = false) String search, Authentication authentication) {
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
-        Invited invited = new Invited();
-        model.addAttribute("invited", invited);
         List<Invited> inviteds = new ArrayList<>();
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
             if (grantedAuthority.getAuthority().equals("ADMIN")) {
@@ -63,13 +61,23 @@ public class InvitedController {
                 for (Invited singleInvited : userInvited) {
                     inviteds.add(singleInvited);
                 }
+                 if (search != null && !search.isEmpty()) {
+                    inviteds = invitedRepository.findByUserAndNameContainingIgnoreCase( userLogged.get(), search);
+                } 
 
             }
         }
 
         model.addAttribute("inviteds", inviteds);
-
         return "invited/index";
+    }
+
+    // Indirizzio alla pagina di creazione
+    @GetMapping("/create")
+    public String create(Model model){
+        Invited invited = new Invited();
+        model.addAttribute("invited", invited);
+        return "invited/create";
     }
 
     // Chiamata post con validazione per creazione invitati
@@ -77,17 +85,13 @@ public class InvitedController {
     public String store(@Valid @ModelAttribute("invited") Invited formInvited,
             BindingResult bindingResult, Model model, Authentication authentication) {
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("showModal", true);
-            model.addAttribute("inviteds", invitedRepository.findAll());
-            return "invited/index";
+        if (bindingResult.hasErrors()) {           
+            return "invited/create";
         }
 
-        if (invitedRepository.existsByEmail(formInvited.getEmail())) {
-            model.addAttribute("showModal", true);
-            model.addAttribute("inviteds", invitedRepository.findAll());
+        if (invitedRepository.existsByEmail(formInvited.getEmail())) {           
             bindingResult.rejectValue("email", "error.invited", "Email già registrata da un altro utente");
-            return "invited/index";
+            return "invited/create";
 
         }
 

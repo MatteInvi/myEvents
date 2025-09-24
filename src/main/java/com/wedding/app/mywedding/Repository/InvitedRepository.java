@@ -12,5 +12,6 @@ public interface InvitedRepository extends JpaRepository<Invited, Integer> {
     public List<Invited> findByNameIgnoreCase(String name);
     public boolean existsByEmail(String email);
     public List<Invited> findByUser(User user);
+    public List<Invited> findByUserAndNameContainingIgnoreCase(User user, String name);
     
 }

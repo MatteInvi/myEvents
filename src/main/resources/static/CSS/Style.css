@@ -23,44 +23,40 @@ body {
   margin: 10px;
 }
 
-.nav-item:hover{
+.nav-item:hover {
   color: black;
 }
 
-
-.navbar, .dropdown-menu{
-  background-image: linear-gradient(blueviolet,rgb(87, 10, 187) ,blueviolet);
+.navbar,
+.dropdown-menu {
+  background-image: linear-gradient(blueviolet, rgb(87, 10, 187), blueviolet);
   box-shadow: 2px 2px 4px antiquewhite;
-
 }
 
-.scrolling{
+.scrolling {
   overflow: auto;
 }
 
-.status-badge{
+.status-badge {
   width: fit-content;
   padding: 3px;
   border-radius: 5px;
   color: white;
 }
 
-.accepted{
+.accepted {
   background-color: green;
 }
 
-.rejected{
+.rejected {
   background-color: red;
 }
 
-.waiting{
+.waiting {
   background-color: orange;
 }
 
-.cell-content{
-   max-height: 50px;
+.cell-content {
+  max-height: 50px;
 }
-
-
-
 
