@@ -6,15 +6,19 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wedding.app.mywedding.Model.Role;
 import com.wedding.app.mywedding.Model.User;
@@ -27,8 +31,8 @@ import com.wedding.app.mywedding.Service.EmailService;
 import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("/register")
-public class RegistrerController {
+@RequestMapping("/user")
+public class UserController {
 
     @Autowired
     RoleRepository roleRepository;
@@ -45,17 +49,30 @@ public class RegistrerController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Value("${app.url}")
+    private String appUrl;
 
+    // Show User
+    @GetMapping("/info")
+    public String show(Model model, Authentication authentication) {
+        Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
 
-    @GetMapping
-    public String register(Model model) {
+        model.addAttribute("user", utenteLoggato.get());
+
+        return "utenti/info";
+    }
+
+    // Create User
+    @GetMapping("/create")
+    public String create(Model model) {
         model.addAttribute("user", new User());
         return "utenti/register";
     };
 
     // Chiamata post per salvare l'utente
-    @PostMapping
-    public String save(@Valid @ModelAttribute("user") User formUser, BindingResult bindingResult, Model model) {
+    @PostMapping("/create")
+    public String save(@Valid @ModelAttribute("user") User formUser, BindingResult bindingResult, Model model,
+            RedirectAttributes redirectAttributes) {
         // Se la mail non è registrata nel db viene salvato l'utente senza verifica
         if (userRepository.existsByEmail(formUser.getEmail())) {
             bindingResult.rejectValue("email", "error.user", "Email già in uso");
@@ -67,16 +84,16 @@ public class RegistrerController {
             return "utenti/register";
         }
 
-        //Individuo e setto il ruolo di utente per tutti i nuovi registrati
-        Role userRole = new Role();       
+        // Individuo e setto il ruolo di utente per tutti i nuovi registrati
+        Role userRole = new Role();
         for (Role role : roleRepository.findAll()) {
-            if (role.getNome().equals("USER")){
+            if (role.getNome().equals("USER")) {
                 userRole = role;
-            }            
+            }
         }
         formUser.setRoles(Set.of(userRole));
-        
-        //Setto password Encoder e salvo utente nel db
+
+        // Setto password Encoder e salvo utente nel db
         formUser.setPassword(passwordEncoder.encode(formUser.getPassword()));
         userRepository.save(formUser);
 
@@ -91,13 +108,14 @@ public class RegistrerController {
         // Salviamo il token nel db e restituiamo un invito a confermare la
         // registrazione
         tokenRepository.save(authToken);
-        model.addAttribute("message", "Controllare la mail per confermare la registrazione");
+        redirectAttributes.addFlashAttribute("message", "Controllare la mail per confermare la registrazione");
 
         // Inviamo mail all'utente passando i dati del form compilato(per recuparare la
         // mail) e il token generato
-        try {emailService.registerEmail(formUser, authToken);
+        try {
+            emailService.registerEmail(formUser, authToken);
         } catch (Exception e) {
-            model.addAttribute("message", "Errore nell'invio:" + e);
+            redirectAttributes.addFlashAttribute("message", "Errore nell'invio:" + e);
         }
         return "redirect:/";
 
@@ -110,7 +128,7 @@ public class RegistrerController {
         // all'utente
         Optional<authToken> authToken = tokenRepository.findByToken(token);
 
-        // Se non è scaduto(24h) passiamo a prendere l'utente associato al token e a
+        // Se non è scaduto(24h) passiamo a prendere l'utente associato al token e
         // settare il suo stato come verificato
         if (authToken.get().getExpireDate().isBefore(LocalDateTime.now())) {
 
@@ -120,6 +138,15 @@ public class RegistrerController {
 
         User user = authToken.get().getUser();
         user.setVerified(true);
+        
+        // Setto il link da mandare all'utente da condividere per poter salvare le foto
+        // nella sua cartella
+
+        //////////////////////////////////////////////////////////////////////////
+        /// CREARE UN MAIL SENDER PER IL LINK////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////
+        
+        user.setLinkPhotoUpload(appUrl + "/photo/upload/" + user.getId());
 
         // Qui aggiorniamo l'utente nel db e resituiamo un messaggio di avvenuta
         // verifica
@@ -128,4 +155,28 @@ public class RegistrerController {
         return "pages/home";
 
     }
+
+    // Edit user
+    @GetMapping("/edit/{id}")
+    public String edit(Model model, @PathVariable Integer id) {
+        Optional<User> singleUser = userRepository.findById(id);
+        model.addAttribute("user", singleUser.get());
+        return "utenti/edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String update(@Valid @ModelAttribute("user") User userForm, BindingResult bindingResult,
+            Authentication authentication) {
+        Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
+        if (bindingResult.hasErrors()) {
+            return "utenti/edit";
+        }
+
+        // Settaggio ruolo + password Encoder
+        userForm.setRoles(utenteLoggato.get().getRoles());
+        userForm.setPassword(passwordEncoder.encode(userForm.getPassword()));
+        userRepository.save(userForm);
+        return "utenti/info";
+    }
+
 }

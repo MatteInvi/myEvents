@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments/head :: head('Home')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: nav}"></nav>
+<main class="">
+    <div class="card mx-5 my-5" th:object="${user}">
+        <div class="card-body">
+            <h5 class="card-title">Informazioni utente</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">ID: [[*{id}]]</li>
+            <li class="list-group-item">Nome: [[*{name}]]</li>
+            <li class="list-group-item">Cognome: [[*{surname}]]</li>
+            <li class="list-group-item">Email: [[*{email}]]</li>
+            <li class="list-group-item">Link per salvare le foto: [[*{linkPhotoUpload}]]</li>
+            <li class="list-group-item"><a class="btn btn-warning" th:href="@{|/user/edit/*{id}|}">Modifica</a></li>
+        </ul>
+
+    </div>
+
+    </main>
+
+
+    <th:block th:insert="~{fragments/footer :: script}"></th:block>
+
+</body>
+
+</html>

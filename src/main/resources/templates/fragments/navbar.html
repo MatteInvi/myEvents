@@ -19,12 +19,15 @@
             </a>
             <ul class="dropdown-menu">
               <li>
-                <a class="dropdown-item" th:href="@{/photo/}">Foto</a>
+                <a class="dropdown-item" th:href="@{/photo/upload}">Foto</a>
               </li>
               <li>
                 <a class="dropdown-item" th:href="@{/invited}">Invitati</a>
               </li>
             </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" th:href="@{|/user/info|}">Info Utente</a>
           </li>
         </ul>
       </div>
@@ -44,9 +47,8 @@
         </form>
       </div>
 
-      
       <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-primary mx-1">Login</a>
-      <a sec:authorize="isAnonymous()" th:href="@{/register}" class="btn btn-primary mx-1">Registrati</a>
+      <a sec:authorize="isAnonymous()" th:href="@{/user/create}" class="btn btn-primary mx-1">Registrati</a>
 
 
     </div>

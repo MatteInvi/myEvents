@@ -21,9 +21,15 @@ import jakarta.validation.constraints.NotBlank;
 @Table(name = "users")
 public class User {
 
-    @Id 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @NotBlank(message = "Inserire nome")
+    private String name;
+
+    @NotBlank(message = "Inserire congnome")
+    private String surname;
 
     @NotBlank(message = "La mail non può essere vuota")
     @Email
@@ -32,17 +38,30 @@ public class User {
     @NotBlank(message = "Inserisci una password")
     private String password;
 
-    @ManyToMany (fetch = FetchType.EAGER)
-    @JoinTable(name = "role_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name="role_id"))
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "role_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     @OneToMany(mappedBy = "user")
     private List<Invited> invited;
 
-
     @OneToOne(mappedBy = "user")
     private authToken authToken;
 
+    private String linkPhotoUpload;
+
+    private boolean verified = false;
+
+    
+
+    // Getter e setter
+    public String getLinkPhotoUpload() {
+        return this.linkPhotoUpload;
+    }
+
+    public void setLinkPhotoUpload(String linkPhotoUpload) {
+        this.linkPhotoUpload = linkPhotoUpload;
+    }
 
     public List<Invited> getInvited() {
         return this.invited;
@@ -52,8 +71,6 @@ public class User {
         this.invited = invited;
     }
 
-
-
     public authToken getAuthToken() {
         return this.authToken;
     }
@@ -61,10 +78,6 @@ public class User {
     public void setAuthToken(authToken authToken) {
         this.authToken = authToken;
     }
-
-
-    private boolean verified = false;
-    
 
     public boolean isVerified() {
         return this.verified;
@@ -78,8 +91,6 @@ public class User {
         this.verified = verified;
     }
 
-
-
     public Set<Role> getRoles() {
         return this.roles;
     }
@@ -87,7 +98,6 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-
 
     public Integer getId() {
         return this.id;
@@ -113,5 +123,20 @@ public class User {
         this.password = password;
     }
 
-    
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return this.surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
 }
