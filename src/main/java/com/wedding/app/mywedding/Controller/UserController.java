@@ -139,13 +139,7 @@ public class UserController {
         User user = authToken.get().getUser();
         user.setVerified(true);
         
-        // Setto il link da mandare all'utente da condividere per poter salvare le foto
-        // nella sua cartella
-
-        //////////////////////////////////////////////////////////////////////////
-        /// CREARE UN MAIL SENDER PER IL LINK////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////
-        
+        // Setto il link da mandare all'utente da condividere per poter salvare le foto        
         user.setLinkPhotoUpload(appUrl + "/photo/upload/" + user.getId());
 
         // Qui aggiorniamo l'utente nel db e resituiamo un messaggio di avvenuta

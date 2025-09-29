@@ -1,10 +1,12 @@
 body {
-  background-color: blueviolet;
+  background-color: royalblue;
   color: whitesmoke;
 }
 
+
+
 .container {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.5);
   width: 80%;
 }
 
@@ -24,13 +26,20 @@ body {
 }
 
 .nav-item:hover {
-  color: black;
+  background-color: royalblue;
 }
 
-.navbar,
+.navbar{
+  padding: 0;
+  background-color: rosybrown;
+}
 .dropdown-menu {
-  background-image: linear-gradient(blueviolet, rgb(87, 10, 187), blueviolet);
-  box-shadow: 2px 2px 4px antiquewhite;
+  background-color: rosybrown;
+}
+
+.dropdown-item:hover{
+  background-color:royalblue;
+
 }
 
 .scrolling {
@@ -60,3 +69,16 @@ body {
   max-height: 50px;
 }
 
+.info_utente{
+  position: relative;
+  width: 50%;
+  background-color: rgba(0,0,0,0.5);
+  margin: 0 auto;
+  padding: 10px;
+  top: 30px;
+}
+
+.elemento_lista{
+  list-style: none;
+  margin: 5px;
+}

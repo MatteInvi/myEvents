@@ -18,10 +18,11 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests(requests -> requests
+        http
+                .authorizeHttpRequests(requests -> requests
                 .requestMatchers("/", "/css/**", "/img/**","/js/**", "/register", "/register/confirm/**").permitAll()
-                .requestMatchers( "/invited/**", "/photo/**" , "/upload", "/user/**", "/user/edit/**").hasAnyAuthority("ADMIN", "USER")
-                .requestMatchers(HttpMethod.POST, "/invited/**", "/upload/**").hasAnyAuthority("ADMIN", "USER")
+                .requestMatchers( "/invited/**", "/photo/**" , "/user/**", "/user/edit/**").hasAnyAuthority("ADMIN", "USER")
+                .requestMatchers(HttpMethod.POST, "/invited/**", "/photo/**").hasAnyAuthority("ADMIN", "USER")
         
                 )
                 .formLogin(form -> form

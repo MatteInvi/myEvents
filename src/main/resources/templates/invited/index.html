@@ -12,102 +12,113 @@
         </div>
         <h2 class="text-center">Lista invitati</h2>
         <div class="row justify-content-between my-2" id="table-strument">
+            <!-- Carica immagine invito -->
+            <div class="col-12">
+                <a th:href="@{|/photo/upload/invite|}" class="w-100 my-2 btn btn-warning">Carica immagine invito</a>
+            </div>
+            <!-- Aggiunta invitati -->
             <a type="button" th:href="@{|/invited/create|}" class="btn btn-primary col-3 mx-3">
                 Aggiungi invitato
             </a>
 
+
             <!-- Sezione di ricerca per nome -->
-            <section id="search" class="col-3">
+            <section th:if="${inviteds.size > 0}" id="search" class="col-3">
                 <form class="d-flex" role="search">
                     <div class="search-input">
-                    <input class="form-control me-2" type="search" placeholder="Search" name="search"
-                       />
+                        <input class="form-control me-2" type="search" placeholder="Search" name="search" />
                     </div>
-                        <button class="btn btn-success" type="submit">Search</button>
+                    <button class="btn btn-success" type="submit">Search</button>
                 </form>
             </section>
         </div>
 
         <!-- Tabella indice degli invitati -->
-        <table class="table table-hover col-10 scrolling">
-            <thead>
-                <tr>
-                    <th class="d-none d-lg-table-cell">ID</th>
-                    <th>Nome</th>
-                    <th>Cognome</th>
-                    <th class="d-none d-lg-table-cell">Stato</th>
-                    <th class="d-none d-lg-table-cell">Annotazioni</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="invited : ${inviteds}" th:object="${invited}">
-                    <td class="d-none d-lg-table-cell" th:text="*{id}"></td>
-                    <td th:text="*{name}"></td>
-                    <td th:text="*{surname}"></td>
-                    <td th:if="*{status == 'rifiutato'}" class="d-none d-lg-table-cell">
-                        <p class="status-badge rejected" th:text="*{status}"></p>
-                    </td>
-                    <td th:if="*{status == 'accettato'}" class="d-none d-lg-table-cell">
-                        <p class="status-badge accepted" th:text="*{status}"></p>
-                    </td>
-                    <td th:if="*{status == 'in_attesa'}" class="d-none d-lg-table-cell">
-                        <p class="status-badge waiting" th:text="*{status}"></p>
-                    </td>
+        <div th:if="${inviteds.size > 0}">
+            <table class="table table-hover col-10 scrolling">
+                <thead>
+                    <tr>
+                        <th class="d-none d-lg-table-cell">ID</th>
+                        <th>Nome</th>
+                        <th>Cognome</th>
+                        <th class="d-none d-lg-table-cell">Stato</th>
+                        <th class="d-none d-lg-table-cell">Annotazioni</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="invited : ${inviteds}" th:object="${invited}">
+                        <td class="d-none d-lg-table-cell" th:text="*{id}"></td>
+                        <td th:text="*{name}"></td>
+                        <td th:text="*{surname}"></td>
+                        <td th:if="*{status == 'rifiutato'}" class="d-none d-lg-table-cell">
+                            <p class="status-badge rejected" th:text="*{status}"></p>
+                        </td>
+                        <td th:if="*{status == 'accettato'}" class="d-none d-lg-table-cell">
+                            <p class="status-badge accepted" th:text="*{status}"></p>
+                        </td>
+                        <td th:if="*{status == 'in_attesa'}" class="d-none d-lg-table-cell">
+                            <p class="status-badge waiting" th:text="*{status}"></p>
+                        </td>
 
-                    <td class="d-none d-lg-table-cell">
-                        <p class="overflow-auto cell-content" th:text="*{annotation}"></p>
-                    </td>
-                    <td class="text-center">
+                        <td class="d-none d-lg-table-cell">
+                            <p class="overflow-auto cell-content" th:text="*{annotation}"></p>
+                        </td>
+                        <td class="text-center">
 
-                        <!-- Sezione pulsanti  -->
-                        <a class="btn btn-secondary" th:href="@{|/invited/edit/*{id}|}">Modifica </a>
+                            <!-- Sezione pulsanti  -->
+                            <a class="btn btn-secondary" th:href="@{|/invited/edit/*{id}|}">Modifica </a>
 
-                        <form method="post" class="d-inline" th:action="@{|/invited/email/send/*{id}|}">
-                            <button type="submit" class="btn btn-primary">Invia invito</button>
-                        </form>
+                            <form method="post" class="d-inline" th:action="@{|/invited/email/send/*{id}|}">
+                                <button type="submit" class="btn btn-primary">Invia invito</button>
+                            </form>
 
 
 
-                        <button type="button" data-bs-toggle="modal" th:data-bs-target="'#delete-modal-' + *{id}"
-                            class="btn btn-warning">Elimina </button>
-                    </td>
+                            <button type="button" data-bs-toggle="modal" th:data-bs-target="'#delete-modal-' + *{id}"
+                                class="btn btn-warning">Elimina </button>
+                        </td>
 
-                    <div class="modal fade" th:id="'delete-modal-' + *{id}" data-bs-backdrop="static"
-                        data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Eliminare
-                                        l'invitato:
-                                        <strong>"[[*{name}]]"</strong>
-                                </div>
-                                <div class="modal-body">
-                                    <p>
-                                        Sei sicuro di voler eliminare l'invitato
-                                        <strong>[[*{name}]]</strong>
-                                        <strong>[[*{surname}]]</strong>?
-                                    </p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Chiudi</button>
-                                    <form th:action="@{|/invited/delete/*{id}|}" method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-danger btn">Elimina</button>
-                                    </form>
+                        <div class="modal fade" th:id="'delete-modal-' + *{id}" data-bs-backdrop="static"
+                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Eliminare
+                                            l'invitato:
+                                            <strong>"[[*{name}]]"</strong>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>
+                                            Sei sicuro di voler eliminare l'invitato
+                                            <strong>[[*{name}]]</strong>
+                                            <strong>[[*{surname}]]</strong>?
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Chiudi</button>
+                                        <form th:action="@{|/invited/delete/*{id}|}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn">Elimina</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
 
-                    </div>
 
-
-                </tr>
-            </tbody>
+                    </tr>
+                </tbody>
 
 
 
-        </table>
+            </table>
+        </div>
+        <div th:unless="${inviteds.size > 0}">
+            <h3 class="text-center">Non ci sono ancora invitati nella lista!</h3>
+        </div>
 
     </main>
     <script th:replace="~{fragments/footer :: script}"></script>

@@ -105,7 +105,7 @@ public class InvitedController {
     public String emailSend(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Invited> invited = invitedRepository.findById(id);
         try {
-            emailService.sendEmail(invited.get().getEmail(), invited.get());
+            emailService.inviteEmail(invited.get().getEmail(), invited.get());
         } catch (Exception e) {
             model.addAttribute("message", "Errore nell'invio: " + e);
         }
