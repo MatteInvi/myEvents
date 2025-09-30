@@ -3,11 +3,10 @@ body {
   color: whitesmoke;
 }
 
-
-
 .container {
   background-color: rgba(0, 0, 0, 0.5);
   width: 80%;
+  margin-top: 20px;
 }
 
 .preview-container {
@@ -29,7 +28,7 @@ body {
   background-color: royalblue;
 }
 
-.navbar{
+.navbar {
   padding: 0;
   background-color: rosybrown;
 }
@@ -37,9 +36,8 @@ body {
   background-color: rosybrown;
 }
 
-.dropdown-item:hover{
-  background-color:royalblue;
-
+.dropdown-item:hover {
+  background-color: royalblue;
 }
 
 .scrolling {
@@ -69,21 +67,37 @@ body {
   max-height: 50px;
 }
 
-.contenitore{
+.contenitore {
   display: flex;
   justify-content: center;
 }
 
-.info_utente{
-
-  
-  background-color: rgba(0,0,0,0.5);
+.info_utente {
+  background-color: rgba(0, 0, 0, 0.5);
   width: 100%;
   padding: 10px;
   margin-top: 30px;
 }
 
-.elemento_lista{
+.elemento_lista {
   list-style: none;
   margin: 5px;
 }
+
+.single-photo{
+  background-color: rosybrown;
+  border: 1px solid royalblue;
+  text-align: center;
+  border-radius: 10px;
+  height: 100%;
+}
+
+.img-photo{
+  border-radius: 20px;
+}
+
+.img-zoomed{
+  max-height: 90vh;
+}
+
+

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments/head :: head('Home')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: nav}"></nav>
+    <main class="container">
+
+        <h2>Galleria</h2>
+        <div class="row g-2">
+            <div class="col-4" th:each="img : ${images}">
+                <div class="single-photo">
+                    <img data-bs-toggle="modal" data-bs-target="#imageModal" th:attr="data-bs-image=${img}"
+                        class="img-photo" th:src="${img}" style="max-width:200px; margin:10px" />
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-transparent border-0">
+                    <div class="modal-body text-center">
+                        <img id="modalImage" src="" class="img-fluid rounded shadow img-zoomed" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </main>
+
+
+    <th:block th:insert="~{fragments/footer :: script}"></th:block>
+
+</body>
+
+</html>

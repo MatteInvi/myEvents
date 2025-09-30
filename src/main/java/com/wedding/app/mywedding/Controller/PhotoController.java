@@ -47,7 +47,8 @@ public class PhotoController {
     }
 
     @PostMapping("/upload/invite/{id}")
-    public String inviteUpload(@RequestParam MultipartFile file, Model model, @PathVariable Integer id,Authentication authentication) {
+    public String inviteUpload(@RequestParam MultipartFile file, Model model, @PathVariable Integer id,
+            Authentication authentication) {
 
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
         try {
@@ -72,10 +73,9 @@ public class PhotoController {
             model.addAttribute("success", "Caricamento avvenuto con successo!");
             model.addAttribute("uploadedFile", fileInfo);
             model.addAttribute("userID", id);
-          
+
             utenteLoggato.get().setLinkInvite(uploadResult.get("secure_url").toString());
             userRepository.save(utenteLoggato.get());
- 
 
         } catch (IOException e) {
             model.addAttribute("error", "Errore durante il caricamento: " + e.getMessage());
@@ -86,8 +86,7 @@ public class PhotoController {
 
     }
 
-//Carico foto evento
-
+    // Carico foto evento
 
     // In caso si entri con utente loggato in automatico manda all'upload su l'id
     // dell'utente
@@ -152,6 +151,27 @@ public class PhotoController {
         }
         return "photo/uploadPhotos";
 
+    }
+
+    //Galleria foto caricaate
+
+    @GetMapping("/gallery")
+    public String showGallery(Model model, Authentication authentication) throws Exception {
+        Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
+        String folderUrl = "myWeddingPhoto/" + utenteLoggato.get().getId();
+        Map result = cloudinary.search()
+                .expression("folder:" + folderUrl)
+                .maxResults(30)
+                .execute();
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> resources = (List<Map<String, Object>>) result.get("resources");
+        List<String> imageUrls = resources.stream()
+                .map(r -> (String) r.get("secure_url"))
+                .toList();
+
+        model.addAttribute("images", imageUrls);
+        return "photo/gallery";
     }
 
 }

@@ -29,3 +29,15 @@ function previewImages(event) {
     reader.readAsDataURL(files[i]);
   }
 }
+
+// Sezione per mostrare le immagini ingrandite al click
+document.addEventListener("DOMContentLoaded", function() {
+    var imageModal = document.getElementById('imageModal');
+    var modalImage = document.getElementById('modalImage');
+
+    imageModal.addEventListener('show.bs.modal', function (event) {
+        var trigger = event.relatedTarget; // immagine cliccata
+        var imgUrl = trigger.getAttribute('data-bs-image');
+        modalImage.src = imgUrl;
+    });
+});
