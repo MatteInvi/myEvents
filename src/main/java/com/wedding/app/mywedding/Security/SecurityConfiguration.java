@@ -20,7 +20,7 @@ public class SecurityConfiguration {
 
         http
                 .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/", "/css/**", "/img/**","/js/**", "/register", "/register/confirm/**").permitAll()
+                .requestMatchers("/", "/css/**", "/img/**","/JS/**", "/register", "/register/confirm/**").permitAll()
                 .requestMatchers( "/invited/**", "/photo/**" , "/user/**", "/user/edit/**").hasAnyAuthority("ADMIN", "USER")
                 .requestMatchers(HttpMethod.POST, "/invited/**", "/photo/**").hasAnyAuthority("ADMIN", "USER")
         

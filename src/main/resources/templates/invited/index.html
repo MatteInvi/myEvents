@@ -17,14 +17,16 @@
                 <a th:href="@{|/photo/upload/invite|}" class="w-100 my-2 btn btn-warning">Carica immagine invito</a>
             </div>
             <!-- Aggiunta invitati -->
-            <a type="button" th:href="@{|/invited/create|}" class="btn btn-primary col-3 mx-3">
-                Aggiungi invitato
-            </a>
+            <div class="col-6">
+                <a type="button" th:href="@{|/invited/create|}" class="btn btn-primary">
+                    Aggiungi invitato
+                </a>
+            </div>
 
 
             <!-- Sezione di ricerca per nome -->
-            <section th:if="${inviteds.size > 0}" id="search" class="col-3">
-                <form class="d-flex" role="search">
+            <section th:if="${inviteds.size > 0}" id="search" class="col-6">
+                <form class="d-flex justify-content-end" role="search">
                     <div class="search-input">
                         <input class="form-control me-2" type="search" placeholder="Search" name="search" />
                     </div>
@@ -122,11 +124,6 @@
 
     </main>
     <script th:replace="~{fragments/footer :: script}"></script>
-
-    <!-- Funzione js per mostrare la modale in caso di errore di validazione -->
-    <script th:if="${showModal}">
-        modalShow();
-    </script>
 
 </body>
 

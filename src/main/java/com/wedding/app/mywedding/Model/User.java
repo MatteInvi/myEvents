@@ -52,6 +52,18 @@ public class User {
 
     private boolean verified = false;
 
+    private String linkInvite;
+
+
+    public String getLinkInvite() {
+        return this.linkInvite;
+    }
+
+    public void setLinkInvite(String linkInvite) {
+        this.linkInvite = linkInvite;
+    }
+
+
     
 
     // Getter e setter

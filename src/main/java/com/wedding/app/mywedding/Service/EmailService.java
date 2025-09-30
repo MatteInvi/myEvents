@@ -17,7 +17,8 @@ public class EmailService {
 
   @Autowired
   private JavaMailSender mailSender;
-// Email di invio invito
+
+  // Email di invio invito
   public void inviteEmail(String to, Invited invited) throws Exception {
     try {
       MimeMessage message = mailSender.createMimeMessage();
@@ -41,7 +42,8 @@ public class EmailService {
 
     }
   }
-// Email per la conferma della registrazione
+
+  // Email per la conferma della registrazione
   public void registerEmail(User user, authToken token) throws Exception {
     try {
       MimeMessage message = mailSender.createMimeMessage();
@@ -53,16 +55,23 @@ public class EmailService {
 
       helper.setTo(user.getEmail());
       helper.setSubject("Conferma registrazione");
-      String html = String.format("""
-          <html>
-            <body>
-              <h1>Conferma la tua registrazione</h1>
-              <p>Clicca sul seguente link per confermare la registrazione a my weddingApp</p>
-              <a style="background-color: orange ; border: 1px solid black; border-radius: 10%%; padidng:5px; text-decoration:none;" href="%s">Link</a>
-            </body>
-          </html>
+      String html = String.format(
+          """
+              <html>
 
-            """, confimationURL);
+              <body style="background-color: rosybrown;">
+                  <main style="margin:0 auto; width: 50%%; position: relative; top: 50%%;">
+                      <h1 style="">Conferma la tua registrazione</h1>
+                      <p>Clicca sul seguente link per confermare la registrazione a my weddingApp</p>
+                      <a style="background-color: royalblue ;color:black; border: 1px solid black; border-radius: 10%%; padding:5px; text-decoration:none;"
+                          href="%s">Link</a>
+                  </main>
+              </body>
+
+              </html>
+
+                          """,
+          confimationURL);
 
       helper.setText(html, true);
 
@@ -71,5 +80,5 @@ public class EmailService {
       System.err.println(e);
     }
   }
-  
+
 }

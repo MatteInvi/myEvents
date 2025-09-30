@@ -5,7 +5,7 @@
 
 <body>
     <nav th:replace="~{fragments/navbar :: nav}"></nav>
-    <main class="">
+    <main class="contenitore">
         <div class="info_utente" th:object="${user}">
 
             <h5 class="titolo">Informazioni utente</h5>
@@ -15,7 +15,8 @@
                 <li class="elemento_lista"><strong>Nome: </strong>[[*{name}]]</li>
                 <li class="elemento_lista"><strong>Cognome: </strong>[[*{surname}]]</li>
                 <li class="elemento_lista"><strong>Email: </strong>[[*{email}]]</li>
-                <li class="elemento_lista"><strong>Link per salvare le foto: </strong>[[*{linkPhotoUpload}]]</li>
+                <li class="elemento_lista"><strong>Link invito: </strong> <a th:href="*{linkInvite}" target="_blank">Apri</a></li>
+                <li class="elemento_lista"><strong>Link per salvare le foto: <a href=""></a></strong>[[*{linkPhotoUpload}]]</li>
                 <li class="elemento_lista"><a class="btn btn-warning" th:href="@{|/user/edit/*{id}|}">Modifica</a></li>
             </ul>
 

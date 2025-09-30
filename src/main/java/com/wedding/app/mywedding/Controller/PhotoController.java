@@ -1,6 +1,7 @@
 package com.wedding.app.mywedding.Controller;
 
 import java.io.IOException;
+import java.lang.classfile.ClassFile.Option;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +47,9 @@ public class PhotoController {
     }
 
     @PostMapping("/upload/invite/{id}")
-    public String inviteUpload(@RequestParam MultipartFile file, Model model, @PathVariable Integer id) {
+    public String inviteUpload(@RequestParam MultipartFile file, Model model, @PathVariable Integer id,Authentication authentication) {
 
+        Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
         try {
             if (file.isEmpty()) {
                 model.addAttribute("error", "Nessun file selezionato");
@@ -70,6 +72,10 @@ public class PhotoController {
             model.addAttribute("success", "Caricamento avvenuto con successo!");
             model.addAttribute("uploadedFile", fileInfo);
             model.addAttribute("userID", id);
+          
+            utenteLoggato.get().setLinkInvite(uploadResult.get("secure_url").toString());
+            userRepository.save(utenteLoggato.get());
+ 
 
         } catch (IOException e) {
             model.addAttribute("error", "Errore durante il caricamento: " + e.getMessage());
@@ -79,6 +85,9 @@ public class PhotoController {
         return "photo/uploadInvite";
 
     }
+
+//Carico foto evento
+
 
     // In caso si entri con utente loggato in automatico manda all'upload su l'id
     // dell'utente

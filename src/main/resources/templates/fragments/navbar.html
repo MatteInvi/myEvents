@@ -31,24 +31,26 @@
             <a class="nav-link active" aria-current="page" th:href="@{|/user/info|}">Info Utente</a>
           </li>
         </ul>
+     
 
-        <div sec:authorize="isAuthenticated()" class="user-details text-light-emphasis">
+      <div sec:authorize="isAuthenticated()" class="user-details text-light-emphasis">
 
-          <p class="d-inline"> Utente: <span sec:authentication="name" class="me-3"></span></p>
-          <p class="d-inline"> Ruolo: <span sec:authentication="principal.authorities" class="me-3"></span></p>
-        </div>
-
-        <div sec:authorize="isAuthenticated()">
-
-          <form class="d-inline" th:action="@{/logout}" method="POST">
-            <button type="submit" class="btn btn-primary">Logout</button>
-          </form>
-        </div>
-
-        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-primary mx-1">Login</a>
-        <a sec:authorize="isAnonymous()" th:href="@{/user/create}" class="btn btn-primary mx-1">Registrati</a>
-
+        <p class="d-inline"> Utente: <span sec:authentication="name" class="me-3"></span></p>
+        <p class="d-inline"> Ruolo: <span sec:authentication="principal.authorities" class="me-3"></span></p>
       </div>
+      <div sec:authorize="isAuthenticated()">
+        <form class="d-inline" th:action="@{/logout}" method="POST">
+          <button type="submit" class="btn btn-primary">Logout</button>
+        </form>
+      </div>
+      </div>
+
+
+
+      <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-primary mx-1">Login</a>
+      <a sec:authorize="isAnonymous()" th:href="@{/user/create}" class="btn btn-primary mx-1">Registrati</a>
+
+
 
 
 

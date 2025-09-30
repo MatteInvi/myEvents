@@ -69,13 +69,18 @@ body {
   max-height: 50px;
 }
 
+.contenitore{
+  display: flex;
+  justify-content: center;
+}
+
 .info_utente{
-  position: relative;
-  width: 50%;
+
+  
   background-color: rgba(0,0,0,0.5);
-  margin: 0 auto;
+  width: 100%;
   padding: 10px;
-  top: 30px;
+  margin-top: 30px;
 }
 
 .elemento_lista{
