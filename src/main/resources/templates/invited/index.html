@@ -7,8 +7,8 @@
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
     <main class="container mt-5 py-5">
-        <div th:text="${message}">
-            <p class="text-success text-center"><strong></strong></p>
+        <div th:if="${message}">
+            <p class="text-center"><strong>[[${message}]]</strong></p>
         </div>
         <h2 class="text-center">Lista invitati</h2>
         <div class="row justify-content-between my-2" id="table-strument">

@@ -1,7 +1,6 @@
 package com.wedding.app.mywedding.Controller;
 
 import java.io.IOException;
-import java.lang.classfile.ClassFile.Option;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -86,7 +85,7 @@ public class PhotoController {
 
     }
 
-    // Carico foto evento
+// Carico foto evento
 
     // In caso si entri con utente loggato in automatico manda all'upload su l'id
     // dell'utente
@@ -153,7 +152,7 @@ public class PhotoController {
 
     }
 
-    //Galleria foto caricaate
+//Galleria foto caricaate
 
     @GetMapping("/gallery")
     public String showGallery(Model model, Authentication authentication) throws Exception {

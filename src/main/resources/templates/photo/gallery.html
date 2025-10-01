@@ -8,13 +8,13 @@
     <main class="container">
 
         <h2>Galleria</h2>
-        <div class="row g-2">
-            <div class="col-4" th:each="img : ${images}">
-                <div class="single-photo">
+        <div class="galleria">
+            <div class="" th:each="img : ${images}">
+            
                     <img data-bs-toggle="modal" data-bs-target="#imageModal" th:attr="data-bs-image=${img}"
                         class="img-photo" th:src="${img}" style="max-width:200px; margin:10px" />
 
-                </div>
+                
             </div>
         </div>
 

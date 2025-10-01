@@ -101,11 +101,16 @@ public class InvitedController {
 
     }
 
+    // Invio email con l'invito
     @PostMapping("/email/send/{id}")
-    public String emailSend(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
+    public String emailSend(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes, Authentication authentication) {
+       // Prendo i dati dell'invitato
         Optional<Invited> invited = invitedRepository.findById(id);
+        // Prendo i dati dell'utente loggato per mandare il link dell'invito
+        Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
+        // Invio email passando al service: invitato(per estrapolare i dati) e link dell'immagine invito per l'utente loggato 
         try {
-            emailService.inviteEmail(invited.get().getEmail(), invited.get());
+            emailService.inviteEmail(invited.get(), utenteLoggato.get().getLinkInvite());
         } catch (Exception e) {
             model.addAttribute("message", "Errore nell'invio: " + e);
         }

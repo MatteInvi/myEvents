@@ -15,7 +15,11 @@
                 <li class="elemento_lista"><strong>Nome: </strong>[[*{name}]]</li>
                 <li class="elemento_lista"><strong>Cognome: </strong>[[*{surname}]]</li>
                 <li class="elemento_lista"><strong>Email: </strong>[[*{email}]]</li>
-                <li class="elemento_lista"><strong>Link invito: </strong> <a th:href="*{linkInvite}" target="_blank">Apri</a></li>
+                <li class="elemento_lista"><strong>Link invito: </strong> 
+                    <a th:if="*{linkInvite}" th:href="*{linkInvite}" target="_blank">Apri</a>
+                    <p class="d-inline" th:unless="*{linkInvite}">Carica la foto <a th:href="@{|/photo/upload/invite|}">QUI</a></p>
+                
+                </li>
                 <li class="elemento_lista"><strong>Link per salvare le foto: <a href=""></a></strong>[[*{linkPhotoUpload}]]</li>
                 <li class="elemento_lista"><a class="btn btn-warning" th:href="@{|/user/edit/*{id}|}">Modifica</a></li>
             </ul>
