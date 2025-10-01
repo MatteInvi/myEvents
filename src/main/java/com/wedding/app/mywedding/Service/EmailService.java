@@ -50,7 +50,7 @@ public class EmailService {
       MimeMessage message = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
       String confimationURL = ServletUriComponentsBuilder.fromCurrentContextPath()
-          .path("/register/confirm")
+          .path("/user/confirm")
           .queryParam("token", token.getToken())
           .toUriString();
 

@@ -108,23 +108,24 @@ public class UserController {
         // Salviamo il token nel db e restituiamo un invito a confermare la
         // registrazione
         tokenRepository.save(authToken);
-        redirectAttributes.addFlashAttribute("message", "Controllare la mail per confermare la registrazione");
+        model.addAttribute("message", "Controllare la mail per confermare la registrazione!");
 
-        // Inviamo mail all'utente passando i dati del form compilato(per recuparare la
+        // Inviamo mail all'utente passando i dati del form compilato(per recuperare la
         // mail) e il token generato
         try {
             emailService.registerEmail(formUser, authToken);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Errore nell'invio:" + e);
         }
-        return "redirect:/";
+        return "pages/message";
 
     }
 
     // Sezione di conferma registrazione
     @GetMapping("/confirm")
     public String confirmRegistration(@RequestParam String token, Model model) {
-        // Andiamo a prendere il token dalla repositori seguendo il link inviato
+
+        // Andiamo a prendere il token dalla repository seguendo il link inviato
         // all'utente
         Optional<authToken> authToken = tokenRepository.findByToken(token);
 
@@ -133,20 +134,20 @@ public class UserController {
         if (authToken.get().getExpireDate().isBefore(LocalDateTime.now())) {
 
             model.addAttribute("message", "Token scaduto!");
-            return "pages/home";
+            return "pages/message";
         }
 
         User user = authToken.get().getUser();
         user.setVerified(true);
-        
-        // Setto il link da mandare all'utente da condividere per poter salvare le foto        
+
+        // Setto il link da mandare all'utente da condividere per poter salvare le foto
         user.setLinkPhotoUpload(appUrl + "/photo/upload/" + user.getId());
 
         // Qui aggiorniamo l'utente nel db e resituiamo un messaggio di avvenuta
         // verifica
         userRepository.save(user);
         model.addAttribute("message", "Utente verificato!");
-        return "pages/home";
+        return "pages/message";
 
     }
 
@@ -166,7 +167,10 @@ public class UserController {
             return "utenti/edit";
         }
 
-        // Settaggio ruolo + password Encoder
+        // Settaggio informazioni non modificabili
+        userForm.setLinkInvite(utenteLoggato.get().getLinkInvite());
+        userForm.setVerified(utenteLoggato.get().getVerified());
+        userForm.setLinkPhotoUpload(utenteLoggato.get().getLinkPhotoUpload());
         userForm.setRoles(utenteLoggato.get().getRoles());
         userForm.setPassword(passwordEncoder.encode(userForm.getPassword()));
         userRepository.save(userForm);

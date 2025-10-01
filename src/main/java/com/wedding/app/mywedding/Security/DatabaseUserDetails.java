@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,10 +29,15 @@ public class DatabaseUserDetails implements UserDetails {
         for (Role role : user.getRoles()) {
             this.grantedAuthorities.add(new SimpleGrantedAuthority(role.getNome()));
         }
+
+        if (user.getVerified() == true) {
+            this.grantedAuthorities.add(new SimpleGrantedAuthority("USER_VERIFIED"));
+
+        }
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities(){
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.grantedAuthorities;
     }
 

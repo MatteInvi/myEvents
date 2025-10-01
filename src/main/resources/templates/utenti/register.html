@@ -9,7 +9,7 @@
     <main class="container mt-3 py-3 w-50">
         <h1 class="text-center">Registrazione</h1>
         <h3 th:text="${message}" class="text-center"></h3>
-        <form th:action="@{|/register|}" th:object="${user}" method="post">
+        <form th:action="@{|/user/create|}" th:object="${user}" method="post">
             <div class="mb-3">
                 <label for="nome">Nome</label>
                 <input type="text" id="nome" class="form-control" th:field="*{name}" th:errorClass="is-invalid">
@@ -43,7 +43,7 @@
 
             <div class="mb-3">
                 <label for="password">Password</label>
-                <input type="text" id="password" class="form-control" th:field="*{password}" th:errorClass="is-invalid">
+                <input type="password" id="password" class="form-control" th:field="*{password}" th:errorClass="is-invalid">
 
                 <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback">
                     <ul>

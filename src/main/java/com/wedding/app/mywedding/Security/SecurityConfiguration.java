@@ -20,9 +20,9 @@ public class SecurityConfiguration {
 
         http
                 .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/", "/css/**", "/img/**","/JS/**", "/register", "/register/confirm/**").permitAll()
-                .requestMatchers( "/invited/**", "/photo/**" , "/user/**", "/user/edit/**").hasAnyAuthority("ADMIN", "USER")
-                .requestMatchers(HttpMethod.POST, "/invited/**", "/photo/**").hasAnyAuthority("ADMIN", "USER")
+                .requestMatchers("/", "/css/**", "/img/**","/JS/**", "/user/create/**" , "/user/confirm").permitAll()
+                .requestMatchers( "/invited/**", "/photo/**" , "/user/**", "/user/edit/**").hasAnyAuthority("ADMIN", "USER_VERIFIED")
+                .requestMatchers(HttpMethod.POST, "/" , "/invited/**", "/photo/**").hasAnyAuthority("ADMIN", "USER_VERIFIED")
         
                 )
                 .formLogin(form -> form
