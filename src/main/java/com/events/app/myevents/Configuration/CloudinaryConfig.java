@@ -1,4 +1,4 @@
-package com.wedding.app.mywedding.Configuration;
+package com.events.app.myevents.Configuration;
 
 
 

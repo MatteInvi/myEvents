@@ -1,11 +1,11 @@
-package com.wedding.app.mywedding.Controller;
+package com.events.app.myevents.Controller;
 
 import com.cloudinary.AuthToken;
-import com.wedding.app.mywedding.Model.User;
-import com.wedding.app.mywedding.Model.authToken;
-import com.wedding.app.mywedding.Repository.TokenRepository;
-import com.wedding.app.mywedding.Repository.UserRepository;
-import com.wedding.app.mywedding.Service.EmailService;
+import com.events.app.myevents.Model.User;
+import com.events.app.myevents.Model.authToken;
+import com.events.app.myevents.Repository.TokenRepository;
+import com.events.app.myevents.Repository.UserRepository;
+import com.events.app.myevents.Service.EmailService;
 
 import ch.qos.logback.core.subst.Token;
 
@@ -36,6 +36,10 @@ public class HomeController {
 
     @GetMapping
     public String Home(Authentication authenication, Model model, RedirectAttributes redirectAttributes) {
+        if (authenication == null || !authenication.isAuthenticated()) {
+            return "pages/home";
+        }
+
         Optional<User> utenteLoggato = userRepository.findByEmail(authenication.getName());
         if (utenteLoggato.get().getVerified() == false) {
 
@@ -65,9 +69,7 @@ public class HomeController {
             }
             return "pages/message";
         }
-
         return "pages/home";
-
     }
 
     @GetMapping("/login")

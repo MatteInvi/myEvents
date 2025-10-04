@@ -1,8 +1,9 @@
-package com.wedding.app.mywedding.Repository;
+package com.events.app.myevents.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.wedding.app.mywedding.Model.Role;
+import com.events.app.myevents.Model.Role;
+
 import java.util.Optional;
 
 

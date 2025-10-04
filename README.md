@@ -1,5 +1,12 @@
-Progetto creato per gioco per provare le mie competenze e per implementare nuove funzioni, qui si possono caricare foto di un evento (al momento si chiama mywedding ma punto a generalizzare su più tipi di eventi), 
-gestire la lista degli invitati (inviando una mail una volta creato un invitato, con all'inteno l'immagine dell'invito precedentemente caricata su una piattaforma esterna), è stata implementata la spring security, in modo
-da dare la possibilità di registrarsi alla piattaforma, di avere ruoli (ADMIN E USER), nonchè di verificare la propria registrazione tramite una mail di conferma.
+Progetto creato per testare le mie competenze e per implementare nuove funzioni, progetto sviluppato su base java spring boot, che permette la 
+gestione di una evento privato, con funzioni come:
+- Aggiunta invitati
+- Possibilità di caricare una foto di un invito 
+- Caricare foto su una cartella personalizzata tramite un link che viene inviato agli invitati 
+- Ogni utente registrato ha la possibilità di visionare le foto caricate dagli invitati
+- Si può inviare una mail ad ogni singolo invitato con l'invito precedentemente caricato
+- Ci si può registrare con email di verica
+
+In questa piattaforma essitono due tipi di utente, USER e ADMIN, chi si registra dalla piattaforma è automaticamente uno USER.
 
 PS. Il progetto è ancora in corso e ci sono delle lacune da sistemare.

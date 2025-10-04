@@ -1,4 +1,4 @@
-package com.wedding.app.mywedding.Security;
+package com.events.app.myevents.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +19,12 @@ public class SecurityConfiguration {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+               
                 .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/", "/css/**", "/img/**","/JS/**", "/user/create/**" , "/user/confirm").permitAll()
                 .requestMatchers( "/invited/**", "/photo/**" , "/user/**", "/user/edit/**").hasAnyAuthority("ADMIN", "USER_VERIFIED")
-                .requestMatchers(HttpMethod.POST, "/" , "/invited/**", "/photo/**").hasAnyAuthority("ADMIN", "USER_VERIFIED")
-        
+                .requestMatchers(HttpMethod.POST, "/**" , "/invited/**", "/photo/**").hasAnyAuthority("ADMIN", "USER_VERIFIED")
+                .requestMatchers("/**", "/css/**", "/img/**","/JS/**", "/user/create/**" , "/user/confirm").permitAll()
+            
                 )
                 .formLogin(form -> form
                     .loginPage("/login")
@@ -32,7 +33,9 @@ public class SecurityConfiguration {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
-                        .permitAll());
+                        .permitAll())
+                .cors(cors -> cors.disable())
+                .csrf(csrf -> csrf.disable());
         return http.build();
     }
 

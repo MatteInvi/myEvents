@@ -1,4 +1,4 @@
-package com.wedding.app.mywedding.Controller;
+package com.events.app.myevents.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.wedding.app.mywedding.Model.Invited;
-import com.wedding.app.mywedding.Model.User;
-import com.wedding.app.mywedding.Repository.InvitedRepository;
-import com.wedding.app.mywedding.Repository.RoleRepository;
-import com.wedding.app.mywedding.Repository.UserRepository;
-import com.wedding.app.mywedding.Service.EmailService;
+import com.events.app.myevents.Model.Invited;
+import com.events.app.myevents.Model.User;
+import com.events.app.myevents.Repository.InvitedRepository;
+import com.events.app.myevents.Repository.RoleRepository;
+import com.events.app.myevents.Repository.UserRepository;
+import com.events.app.myevents.Service.EmailService;
+
 import jakarta.validation.Valid;
 
 @Controller

@@ -1,4 +1,4 @@
-package com.wedding.app.mywedding.Utility;
+package com.events.app.myevents.Utility;
 
 import java.security.SecureRandom;
 

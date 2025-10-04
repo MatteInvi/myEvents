@@ -1,10 +1,10 @@
-package com.wedding.app.mywedding.Repository;
+package com.events.app.myevents.Repository;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.wedding.app.mywedding.Model.User;
+import com.events.app.myevents.Model.User;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
     

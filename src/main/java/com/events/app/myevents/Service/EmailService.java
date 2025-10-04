@@ -1,4 +1,4 @@
-package com.wedding.app.mywedding.Service;
+package com.events.app.myevents.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -6,9 +6,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.wedding.app.mywedding.Model.Invited;
-import com.wedding.app.mywedding.Model.User;
-import com.wedding.app.mywedding.Model.authToken;
+import com.events.app.myevents.Model.Invited;
+import com.events.app.myevents.Model.User;
+import com.events.app.myevents.Model.authToken;
 
 import jakarta.mail.internet.MimeMessage;
 

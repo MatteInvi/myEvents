@@ -1,4 +1,4 @@
-package com.wedding.app.mywedding.Controller;
+package com.events.app.myevents.Controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,8 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.wedding.app.mywedding.Model.User;
-import com.wedding.app.mywedding.Repository.UserRepository;
+import com.events.app.myevents.Model.User;
+import com.events.app.myevents.Repository.UserRepository;
 
 @Controller
 @RequestMapping("/photo")

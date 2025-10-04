@@ -1,4 +1,4 @@
-package com.wedding.app.mywedding.Model;
+package com.events.app.myevents.Model;
 
 import java.time.LocalDateTime;
 

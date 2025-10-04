@@ -1,4 +1,4 @@
-package com.wedding.app.mywedding.Repository;
+package com.events.app.myevents.Repository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import com.wedding.app.mywedding.Model.authToken;
+import com.events.app.myevents.Model.authToken;
 
 import jakarta.transaction.Transactional;
 

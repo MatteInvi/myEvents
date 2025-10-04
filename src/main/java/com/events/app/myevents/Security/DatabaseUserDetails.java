@@ -1,4 +1,4 @@
-package com.wedding.app.mywedding.Security;
+package com.events.app.myevents.Security;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -8,8 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.wedding.app.mywedding.Model.Role;
-import com.wedding.app.mywedding.Model.User;
+import com.events.app.myevents.Model.Role;
+import com.events.app.myevents.Model.User;
 
 public class DatabaseUserDetails implements UserDetails {
 

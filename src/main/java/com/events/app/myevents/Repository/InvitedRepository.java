@@ -1,11 +1,11 @@
-package com.wedding.app.mywedding.Repository;
+package com.events.app.myevents.Repository;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.wedding.app.mywedding.Model.Invited;
-import com.wedding.app.mywedding.Model.User;
+import com.events.app.myevents.Model.Invited;
+import com.events.app.myevents.Model.User;
 
 public interface InvitedRepository extends JpaRepository<Invited, Integer> {
 

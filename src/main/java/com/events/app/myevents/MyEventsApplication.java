@@ -1,13 +1,13 @@
-package com.wedding.app.mywedding;
+package com.events.app.myevents;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MyweddingApplication {
+public class MyEventsApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MyweddingApplication.class, args);
+		SpringApplication.run(MyEventsApplication.class, args);
 	}
 
 }

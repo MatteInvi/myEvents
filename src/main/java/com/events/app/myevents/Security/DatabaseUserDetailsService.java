@@ -1,4 +1,4 @@
-package com.wedding.app.mywedding.Security;
+package com.events.app.myevents.Security;
 
 import java.util.Optional;
 
@@ -9,8 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.wedding.app.mywedding.Model.User;
-import com.wedding.app.mywedding.Repository.UserRepository;
+import com.events.app.myevents.Model.User;
+import com.events.app.myevents.Repository.UserRepository;
 
 @Service
 public class DatabaseUserDetailsService implements UserDetailsService {
