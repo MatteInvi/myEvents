@@ -41,7 +41,7 @@ public class PhotoController {
     @GetMapping("/upload/invite")
     public String invitePhoto(Model model, Authentication authentication) {
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
-        model.addAttribute("userID", utenteLoggato.get().getId());
+        model.addAttribute("user", utenteLoggato.get());
         return "photo/uploadInvite";
     }
 
@@ -53,7 +53,7 @@ public class PhotoController {
         try {
             if (file.isEmpty()) {
                 model.addAttribute("error", "Nessun file selezionato");
-                model.addAttribute("userID", id);
+                model.addAttribute("user", utenteLoggato.get());
                 return "photo/uploadInvite";
             }
 
@@ -71,14 +71,14 @@ public class PhotoController {
             // Aggiungo al model per la view
             model.addAttribute("success", "Caricamento avvenuto con successo!");
             model.addAttribute("uploadedFile", fileInfo);
-            model.addAttribute("userID", id);
+            model.addAttribute("user", utenteLoggato.get());
 
             utenteLoggato.get().setLinkInvite(uploadResult.get("secure_url").toString());
             userRepository.save(utenteLoggato.get());
 
         } catch (IOException e) {
             model.addAttribute("error", "Errore durante il caricamento: " + e.getMessage());
-            model.addAttribute("userID", id);
+            model.addAttribute("user",  utenteLoggato.get());
         }
 
         return "photo/uploadInvite";

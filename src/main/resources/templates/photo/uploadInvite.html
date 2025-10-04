@@ -13,24 +13,43 @@
         <h5>Attenzione! Se hai già caricato un invito verrà sovrascritto</h5>
         <h5 th:if="${error}" class="text-danger" th:text="${error}"></h5>
         <h5 th:if="${success}" class="text-success" th:text="${success}"></h5>
-        
+
         <!-- Sezione caricamento foto -->
 
-        <form th:action="@{|/photo/upload/invite/${userID}|}" method="post" enctype="multipart/form-data">
+        <form th:action="@{|/photo/upload/invite/${user.id}|}" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <input class="form-control" type="file" name="file" id="fileInput" accept="image/*">
             </div>
 
             <button class="btn btn-primary" type="submit">Invia</button>
         </form>
-            <!-- Preview -->
+        <!-- Preview -->
         <div class="preview-container d-block" id="preview"></div>
+
+        <!-- Immagine invito se già caricato -->
+        <section th:if="${!user.linkInvite.isEmpty()}">
+            <h5>Invito caricato:</h5>
+
+            <img data-bs-toggle="modal" data-bs-target="#imageModal" th:attr="data-bs-image=${user.linkInvite}"
+                class="img-photo" th:src="${user.linkInvite}" style="max-width:200px; margin:10px" />
+
+            <!-- Modal photo zoomed -->
+            <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content bg-transparent border-0">
+                        <div class="modal-body text-center">
+                            <img id="modalImage" src="" class="img-fluid rounded shadow img-zoomed" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- Sezione risultato caricamento -->
 
         <div class="row" th:if="${success}">
             <p class="col-12">Questo è il link per visualizzare la foto:</p>
-            <div class="col-12"  th:object="${uploadedFile}">
+            <div class="col-12" th:object="${uploadedFile}">
                 <a class="link-primary link-underline-opacity-25 link-opacity-100-hover" th:href="*{url}"
                     target="_blank">[[*{name}]]</a>
             </div>

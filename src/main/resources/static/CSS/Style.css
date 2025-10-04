@@ -7,6 +7,7 @@ body {
   background-color: rgba(0, 0, 0, 0.5);
   width: 80%;
   margin-top: 20px;
+  padding: 10px 10px 10px 10px;
 }
 
 .preview-container {
@@ -105,6 +106,9 @@ body {
   max-height: 90vh;
 }
 
+#preview-invite{
+  width: 30%;
+}
 
 
 

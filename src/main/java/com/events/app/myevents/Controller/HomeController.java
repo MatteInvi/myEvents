@@ -1,13 +1,11 @@
 package com.events.app.myevents.Controller;
 
-import com.cloudinary.AuthToken;
 import com.events.app.myevents.Model.User;
 import com.events.app.myevents.Model.authToken;
 import com.events.app.myevents.Repository.TokenRepository;
 import com.events.app.myevents.Repository.UserRepository;
 import com.events.app.myevents.Service.EmailService;
 
-import ch.qos.logback.core.subst.Token;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

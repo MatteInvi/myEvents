@@ -1,5 +1,5 @@
 <th:block th:fragment="navbar">
-  <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
+  <nav class="navbar navbar-expand-lg border-bottom border-body py-2" data-bs-theme="dark">
     <div class="container-fluid">
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -7,8 +7,8 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <img th:src="@{/img/logo.jpg}" alt="logo" width="30" height="30">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <img class="mx-1" th:src="@{/img/logo.jpg}" alt="logo" width="30" height="30">
+        <ul sec:authorize="isAuthenticated()" class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" th:href="@{/}">Home</a>
           </li>
@@ -34,25 +34,25 @@
             <a class="nav-link active" aria-current="page" th:href="@{|/photo/gallery|}">Gallery foto</a>
           </li>
         </ul>
-     
 
-      <div sec:authorize="isAuthenticated()" class="user-details text-light-emphasis">
 
-        <p class="d-inline"> Utente: <span sec:authentication="name" class="me-3"></span></p>
-        <p class="d-inline"> Ruolo: <span sec:authentication="principal.authorities" class="me-3"></span></p>
+        <div sec:authorize="isAuthenticated()" class="user-details text-light-emphasis">
+
+          <p class="d-inline"> Utente: <span sec:authentication="name" class="me-3"></span></p>
+          <p class="d-inline"> Ruolo: <span sec:authentication="principal.authorities" class="me-3"></span></p>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+          <form class="d-inline" th:action="@{/logout}" method="POST">
+            <button type="submit" class="btn btn-primary">Logout</button>
+          </form>
+        </div>
       </div>
-      <div sec:authorize="isAuthenticated()">
-        <form class="d-inline" th:action="@{/logout}" method="POST">
-          <button type="submit" class="btn btn-primary">Logout</button>
-        </form>
+
+
+      <div>
+        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-primary mx-1">Login</a>
+        <a sec:authorize="isAnonymous()" th:href="@{/user/create}" class="btn btn-primary mx-1">Registrati</a>
       </div>
-      </div>
-
-
-
-      <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-primary mx-1">Login</a>
-      <a sec:authorize="isAnonymous()" th:href="@{/user/create}" class="btn btn-primary mx-1">Registrati</a>
-
 
 
 
