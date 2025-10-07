@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmls:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments/head :: head(Utenti)}">
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+    <main class="container mt-5 py-5">
+        <div th:if="${message}">
+            <p class="text-center"><strong>[[${message}]]</strong></p>
+        </div>
+        <h2 class="text-center">Lista utenti</h2>
+        <div class="row justify-content-between my-2" id="table-strument">
+
+            <!-- Sezione di ricerca per nome -->
+            <section th:if="${users.size > 0}" id="search" class="col-6">
+                <form class="d-flex justify-content-end" role="search">
+                    <div class="search-input">
+                        <input class="form-control me-2" type="search" placeholder="Search" name="search" />
+                    </div>
+                    <button class="btn btn-success" type="submit">Search</button>
+                </form>
+            </section>
+        </div>
+
+        <!-- Tabella indice degli invitati -->
+        <div th:if="${users.size > 0}">
+            <table class="table table-hover col-10 scrolling">
+                <thead>
+                    <tr>
+                        <th class="d-none d-lg-table-cell">ID</th>
+                        <th>Nome</th>
+                        <th>Cognome</th>
+                        <th>Email</th>                    
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}" th:object="${user}">
+                        <td  th:text="*{id}"></td>
+                        <td th:text="*{name}"></td>
+                        <td th:text="*{surname}"></td>
+                        <td th:text="*{email}"></td>
+                        <td class="text-center">
+
+                            <!-- Sezione pulsanti  -->
+                            <a class="btn btn-primary" th:href="@{|/user/show/*{id}|}">Mostra</a>
+
+                        </td>
+                    </tr>
+                </tbody>
+
+
+
+            </table>
+        </div>
+        <div th:unless="${users.size > 0}">
+            <h3 class="text-center">Non ci sono utenti nella lista!</h3>
+        </div>
+
+    </main>
+    <script th:replace="~{fragments/footer :: script}"></script>
+
+</body>
+
+</html>

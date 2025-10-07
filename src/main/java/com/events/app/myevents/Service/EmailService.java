@@ -25,11 +25,11 @@ public class EmailService {
       MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
       helper.setTo(invited.getEmail());
-      helper.setSubject("Partecipazione matrimonio");
+      helper.setSubject("Invito evento");
       String html = String.format("""
           <html>
             <body style="font-family: Arial, sans-serif;">
-              <h1 style="color:#2e6c80;">Sei invitato al nostro matrimonio!</h1>
+              <h1 style="color:#2e6c80;">Sei invitato al mio Evento!</h1>
               <p>Ciao <strong>%s</strong> <strong>%s</strong> sei invitato... </p>
               <img style="width: 50vh;" class="text-align:center; border: 5 px solid royalblue; border-radius: 10px;" src="%s"> 
            </body>

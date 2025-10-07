@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.events.app.myevents.Model.Role;
 import com.events.app.myevents.Model.User;
@@ -52,9 +54,36 @@ public class UserController {
     @Value("${app.url}")
     private String appUrl;
 
-    // Show User
+    // Index user (per ADMIN)
+    @GetMapping("/index")
+    public String index(Authentication authentication, Model model) {
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            if (grantedAuthority.getAuthority().equals("ADMIN")) {
+                model.addAttribute("users", userRepository.findAll());
+                return "utenti/index";
+            }
+        }
+        model.addAttribute("message", "Non sei autorizzato a vedere questa pagina!");
+        return "pages/message";
+
+    }
+
+    // Show user (per ADMIN)
+    @GetMapping("/show/{id}")
+    public String show(@PathVariable Integer id, Model model, Authentication authentication) {
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            if (grantedAuthority.getAuthority().equals("ADMIN")) {
+                model.addAttribute("user", userRepository.findById(id).get());
+                return "utenti/info";
+            }
+        }
+        model.addAttribute("message", "Non sei autorizzato a vedere questa pagina!");
+        return "pages/message";
+    }
+
+    // info User loggato
     @GetMapping("/info")
-    public String show(Model model, Authentication authentication) {
+    public String info(Model model, Authentication authentication) {
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
 
         model.addAttribute("user", utenteLoggato.get());

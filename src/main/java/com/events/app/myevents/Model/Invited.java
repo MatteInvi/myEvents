@@ -37,10 +37,11 @@ public class Invited {
     private String annotation;
 
     @ManyToOne
-    @JoinColumn(name ="user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference
     private User user;
 
+    //Getter e Setter
 
     public User getUser() {
         return this.user;
@@ -50,8 +51,6 @@ public class Invited {
         this.user = user;
     }
 
-
-
     public String getEmail() {
         return this.email;
     }
@@ -59,7 +58,6 @@ public class Invited {
     public void setEmail(String email) {
         this.email = email;
     }
-
 
     public String getAnnotation() {
         return this.annotation;

@@ -55,6 +55,7 @@ public class User {
 
     private String linkInvite;
 
+    // Getter e setter
 
     public String getLinkInvite() {
         return this.linkInvite;
@@ -64,10 +65,6 @@ public class User {
         this.linkInvite = linkInvite;
     }
 
-
-    
-
-    // Getter e setter
     public String getLinkPhotoUpload() {
         return this.linkPhotoUpload;
     }

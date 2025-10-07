@@ -10,18 +10,18 @@
         <h2>Galleria</h2>
         <div class="galleria">
             <div class="" th:each="img : ${images}">
-            
-                    <img data-bs-toggle="modal" data-bs-target="#imageModal" th:attr="data-bs-image=${img}"
-                        class="img-photo" th:src="${img}" style="max-width:200px; margin:10px" />
 
-                
+                <img data-bs-toggle="modal" data-bs-target="#imageModal" th:attr="data-bs-image=${img}"
+                    class="img-photo" th:src="${img}" style="max-width:200px; margin:10px" />
+
+
             </div>
         </div>
 
 
         <!-- Modal photo zoomed -->
         <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content bg-transparent border-0">
                     <div class="modal-body text-center">
                         <img id="modalImage" src="" class="img-fluid rounded shadow img-zoomed" />

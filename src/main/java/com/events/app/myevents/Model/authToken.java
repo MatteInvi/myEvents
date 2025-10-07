@@ -11,20 +11,22 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table (name = "authToken")
+@Table(name = "authToken")
 public class authToken {
-    
+
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String token;
+    
     private LocalDateTime expireDate;
 
     @OneToOne
-    @JoinColumn(name="user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    // Getter e setter
 
     public Integer getId() {
         return this.id;
