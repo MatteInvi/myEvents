@@ -27,7 +27,7 @@
         <div class="preview-container d-block" id="preview"></div>
 
         <!-- Immagine invito se già caricato -->
-        <section th:if="${!user.linkInvite.isEmpty()}">
+       <!----> <section th:if="${user.linkInvite}">
             <h5>Invito caricato:</h5>
 
             <img data-bs-toggle="modal" data-bs-target="#imageModal" th:attr="data-bs-image=${user.linkInvite}"
@@ -43,7 +43,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> 
 
         <!-- Sezione risultato caricamento -->
 

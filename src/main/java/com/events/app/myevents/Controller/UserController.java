@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.events.app.myevents.Model.Role;
 import com.events.app.myevents.Model.User;
@@ -182,16 +181,32 @@ public class UserController {
 
     // Edit user
     @GetMapping("/edit/{id}")
-    public String edit(Model model, @PathVariable Integer id) {
+    public String edit(Model model, @PathVariable Integer id, Authentication authentication) {
+        Optional<User> utenteOptional = userRepository.findByEmail(authentication.getName());
         Optional<User> singleUser = userRepository.findById(id);
-        model.addAttribute("user", singleUser.get());
-        return "utenti/edit";
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if (authority.getAuthority().equals("ADMIN")) {                
+                model.addAttribute("user", singleUser.get());
+                return "utenti/edit";
+            } else if (authority.getAuthority().equals("USER")) {
+                if (utenteOptional.get().equals(userRepository.findById(id).get())) {
+                    model.addAttribute("user", singleUser.get());
+                    return "utenti/edit";
+                }
+            }
+
+        }
+        model.addAttribute("message", "Non sei autorizzato a vedere questa pagina!");
+        return "pages/message";
+
     }
 
     @PostMapping("/edit/{id}")
     public String update(@Valid @ModelAttribute("user") User userForm, BindingResult bindingResult,
             Authentication authentication) {
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
+
+
         if (bindingResult.hasErrors()) {
             return "utenti/edit";
         }
