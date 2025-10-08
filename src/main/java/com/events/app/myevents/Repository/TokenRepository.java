@@ -20,5 +20,5 @@ public interface TokenRepository extends JpaRepository<authToken, Integer> {
     @Modifying
     @Transactional
     @Query("DELETE FROM authToken token WHERE token.expireDate <= :now")
-    void deleteAllExpiredSince(LocalDateTime now);
+    void deleteAllExpiredToken(LocalDateTime now);
 }

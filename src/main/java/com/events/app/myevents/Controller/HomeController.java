@@ -6,7 +6,6 @@ import com.events.app.myevents.Repository.TokenRepository;
 import com.events.app.myevents.Repository.UserRepository;
 import com.events.app.myevents.Service.EmailService;
 
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,33 +38,37 @@ public class HomeController {
         }
 
         Optional<User> utenteLoggato = userRepository.findByEmail(authenication.getName());
+        // Se l'utente non è ancora verificato
         if (utenteLoggato.get().getVerified() == false) {
+            // Elimino i token scaduti
+            tokenRepository.deleteAllExpiredToken(LocalDateTime.now());
 
-            if (utenteLoggato.get().getAuthToken() != null) {
-                // Elimina token precedente
-                authToken oldToken = utenteLoggato.get().getAuthToken();
-                utenteLoggato.get().setAuthToken(null);
-                userRepository.save(utenteLoggato.get());
-                tokenRepository.delete(oldToken);
+            // Se il token è vuoto (quindi era scaduto) ne genero uno nuovo direttamente
+            if (utenteLoggato.get().getAuthToken() == null) {
+                String token = UUID.randomUUID().toString();
+                authToken authToken = new authToken();
+                authToken.setToken(token);
+                authToken.setUser(utenteLoggato.get());
+                authToken.setExpireDate(LocalDateTime.now().plusHours(24));
+                utenteLoggato.get().setAuthToken(authToken);
+
+                tokenRepository.save(authToken);
+                model.addAttribute("message", "Controllare la mail per confermare la registrazione");
+
+                // Inviamo una nuova mail con il token di verifica
+                try {
+                    emailService.registerEmail(utenteLoggato.get(), authToken);
+                } catch (Exception e) {
+                    model.addAttribute("message", "Errore nell'invio: " + e);
+                }
+                return "pages/message";
+            // Altrimemti invito l'utente a confermare tramite il token precedentemente invitato
+            } else {
+                model.addAttribute("message", "Conferma l'account per poter utilizzare le funzioni");
+                return "pages/message";
             }
 
-            // Generiamo un token di verifica settando i parametri dello stesso
-            String token = UUID.randomUUID().toString();
-            authToken authToken = new authToken();
-            authToken.setToken(token);
-            authToken.setUser(utenteLoggato.get());
-            authToken.setExpireDate(LocalDateTime.now().plusHours(24));
-            utenteLoggato.get().setAuthToken(authToken);
 
-            tokenRepository.save(authToken);
-            model.addAttribute("message", "Controllare la mail per confermare la registrazione");
-
-            try {
-                emailService.registerEmail(utenteLoggato.get(), authToken);
-            } catch (Exception e) {
-                model.addAttribute("message", "Errore nell'invio: " + e);
-            }
-            return "pages/message";
         }
         return "pages/home";
     }
