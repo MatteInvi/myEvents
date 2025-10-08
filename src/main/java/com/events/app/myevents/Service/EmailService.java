@@ -60,12 +60,12 @@ public class EmailService {
           """
               <html>
 
-              <body style="background-color: rosybrown;">
+              <body style="background-color: rosybrown; padding:20px;">
                   <main style="margin:0 auto; width: 50%%; position: relative; top: 50%%;">
                       <h1 style="">Conferma la tua registrazione</h1>
-                      <p>Clicca sul seguente link per confermare la registrazione a my weddingApp</p>
-                      <a style="background-color: royalblue ;color:black; border: 1px solid black; border-radius: 10%%; padding:5px; text-decoration:none;"
-                          href="%s">Link</a>
+                      <p>Clicca sul seguente link per confermare la registrazione a MyEvents</p>
+                      <a style="background-color: royalblue; text-align: center; color: black; font-size: x-large; border-radius: 10px; padding: 5px; text-decoration: none; display: block; width: 30%%;"
+                          href="%s">Conferma</a>
                   </main>
               </body>
 

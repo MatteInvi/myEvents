@@ -15,7 +15,7 @@ public class TokenCleanupService {
     TokenRepository tokenRepository;
 
     // Controllo ed elimino token scaduti ogni minuto
-    @Scheduled(fixedDelay = 60 * 1000)
+    @Scheduled(fixedDelay = 60 * 60 * 1000)
     private void deletingExpriredToken(){
         tokenRepository.deleteAllExpiredToken(LocalDateTime.now());
     }
