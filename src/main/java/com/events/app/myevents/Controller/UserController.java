@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,6 +31,8 @@ import com.events.app.myevents.Repository.TokenRepository;
 import com.events.app.myevents.Repository.UserRepository;
 import com.events.app.myevents.Service.EmailService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @Controller
@@ -151,7 +155,7 @@ public class UserController {
 
     // Sezione di conferma registrazione
     @GetMapping("/confirm")
-    public String confirmRegistration(@RequestParam String token, Model model) {
+    public String confirmRegistration(@RequestParam String token, Model model, HttpServletRequest request, HttpServletResponse response) {
 
         // Andiamo a prendere il token dalla repository seguendo il link inviato
         // all'utente
@@ -174,8 +178,14 @@ public class UserController {
         // Qui aggiorniamo l'utente nel db e resituiamo un messaggio di avvenuta
         // verifica
         userRepository.save(user);
-        model.addAttribute("message", "Utente verificato!");
-        return "pages/message";
+        // Effettuo logout con messagio di avvenuta registrazione
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+
+        model.addAttribute("confirm", "Registrazione confermata con successo!");
+        return "pages/login";
 
     }
 
@@ -185,7 +195,7 @@ public class UserController {
         Optional<User> utenteOptional = userRepository.findByEmail(authentication.getName());
         Optional<User> singleUser = userRepository.findById(id);
         for (GrantedAuthority authority : authentication.getAuthorities()) {
-            if (authority.getAuthority().equals("ADMIN")) {                
+            if (authority.getAuthority().equals("ADMIN")) {
                 model.addAttribute("user", singleUser.get());
                 return "utenti/edit";
             } else if (authority.getAuthority().equals("USER")) {
@@ -205,7 +215,6 @@ public class UserController {
     public String update(@Valid @ModelAttribute("user") User userForm, BindingResult bindingResult,
             Authentication authentication) {
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
-
 
         if (bindingResult.hasErrors()) {
             return "utenti/edit";
