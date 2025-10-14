@@ -1,6 +1,8 @@
 package com.events.app.myevents.Controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -59,10 +61,17 @@ public class UserController {
 
     // Index user (per ADMIN)
     @GetMapping("/index")
-    public String index(Authentication authentication, Model model) {
+    public String index(@RequestParam(required = false) String search, Authentication authentication, Model model) {
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
             if (grantedAuthority.getAuthority().equals("ADMIN")) {
-                model.addAttribute("users", userRepository.findAll());
+                List<User> users = new ArrayList<>();
+                if (search != null && !search.isEmpty()) {
+                    users = userRepository.findByNameContainingIgnoreCase(search);
+                } else {
+                    users= userRepository.findAll();
+
+                }
+                model.addAttribute("users", users);
                 return "utenti/index";
             }
         }
@@ -155,7 +164,8 @@ public class UserController {
 
     // Sezione di conferma registrazione
     @GetMapping("/confirm")
-    public String confirmRegistration(@RequestParam String token, Model model, HttpServletRequest request, HttpServletResponse response) {
+    public String confirmRegistration(@RequestParam String token, Model model, HttpServletRequest request,
+            HttpServletResponse response) {
 
         // Andiamo a prendere il token dalla repository seguendo il link inviato
         // all'utente

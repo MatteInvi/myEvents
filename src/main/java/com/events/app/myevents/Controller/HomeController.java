@@ -1,7 +1,9 @@
 package com.events.app.myevents.Controller;
 
+import com.events.app.myevents.Model.Role;
 import com.events.app.myevents.Model.User;
 import com.events.app.myevents.Model.authToken;
+import com.events.app.myevents.Repository.RoleRepository;
 import com.events.app.myevents.Repository.TokenRepository;
 import com.events.app.myevents.Repository.UserRepository;
 import com.events.app.myevents.Service.EmailService;
@@ -22,6 +24,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/")
 public class HomeController {
 
+    @Autowired 
+    RoleRepository roleRepository;
+
     @Autowired
     TokenRepository tokenRepository;
 
@@ -31,13 +36,24 @@ public class HomeController {
     @Autowired
     EmailService emailService;
 
+
     @GetMapping
     public String Home(Authentication authenication, Model model, RedirectAttributes redirectAttributes) {
+        
+        //Se non è loggato mostra la pagina home
         if (authenication == null || !authenication.isAuthenticated()) {
             return "pages/home";
         }
 
         Optional<User> utenteLoggato = userRepository.findByEmail(authenication.getName());
+        //Se è admin può accedervi comunque anche se non verificato
+        for (Role singleRole : utenteLoggato.get().getRoles()) {
+            if (singleRole.getNome().equals("ADMIN")){
+                return "pages/home";
+            }            
+        }
+        
+
         // Se l'utente non è ancora verificato
         if (utenteLoggato.get().getVerified() == false) {
             // Elimino i token scaduti

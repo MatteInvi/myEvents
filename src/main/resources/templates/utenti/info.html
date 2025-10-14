@@ -15,6 +15,10 @@
                 <li class="elemento_lista"><strong>Nome: </strong>[[*{name}]]</li>
                 <li class="elemento_lista"><strong>Cognome: </strong>[[*{surname}]]</li>
                 <li class="elemento_lista"><strong>Email: </strong>[[*{email}]]</li>
+                <li class="elemento_lista"><strong>Ruolo: </strong> 
+                    <span th:each="role : ${user.roles}">[[${role.nome}]] </span>
+                </li>
+
                 <li sec:authorize="hasAuthority('USER')" class="elemento_lista"><strong>Link invito: </strong>
                     <a th:if="*{linkInvite}" th:href="*{linkInvite}" target="_blank">Apri</a>
                     <p class="d-inline" th:unless="*{linkInvite}">Carica la foto <a
