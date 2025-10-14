@@ -5,7 +5,7 @@ gestione di una evento privato, con funzioni come:
 - Caricare foto su una cartella personalizzata tramite un link che viene inviato agli invitati 
 - Ogni utente registrato ha la possibilità di visionare le foto caricate dagli invitati
 - Si può inviare una mail ad ogni singolo invitato con l'invito precedentemente caricato
-- Ci si può registrare con email di verica
+- Ci si può registrare con email di verifica
 
 In questa piattaforma essitono due tipi di utente, USER e ADMIN, chi si registra dalla piattaforma è automaticamente uno USER.
 
