@@ -10,14 +10,16 @@
 
             <h5 class="titolo">Informazioni utente</h5>
 
-            <img th:src="*{linkProfilePhoto}" class="profile-photo">
 
+            <img th:if="*{linkProfilePhoto}" th:src="*{linkProfilePhoto}" class="profile-photo" alt="foto profilo">
+            <img th:unless="*{linkProfilePhoto}" th:src="@{/img/profilo-alt.png}" class="profile-photo"
+                alt="foto profilo">
 
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                Carica foto profilo               
+                Carica foto profilo
             </button>
-             <h4 style="color: red;" th:text="${error}"></h4>
-             <h4 style="color: green" th:text="${success}"></h4>
+            <h4 style="color: red;" th:text="${error}"></h4>
+            <h4 style="color: green" th:text="${success}"></h4>
 
 
             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -29,7 +31,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form method="post" th:action="@{/user/profilePhoto}"  enctype="multipart/form-data">
+                            <form method="post" th:action="@{/user/profilePhoto}" enctype="multipart/form-data">
                                 <input class="form-control" type="file" name="file" id="fileInput" accept="image/*">
                                 <button class="btn btn-primary my-2" type="submit">Carica</button>
                             </form>
@@ -56,7 +58,8 @@
                 </li>
                 <li class="elemento_lista" sec:authorize="hasAuthority('ADMIN')">
                     <p class="mb-0" th:if="*{linkInvite}"><strong>Link invito: </strong>[[*{linkInvite}]]</p>
-                    <p class="mb-0" th:unless="*{linkInvite}">Non è stato caricato nessun invito!</p>
+                    <p class="mb-0" th:unless="*{linkInvite}"><strong>Link invito: </strong>Non è stato caricato nessun
+                        invito!</p>
                 </li>
                 <li class="elemento_lista"><strong>Link per salvare le foto: <a
                             href=""></a></strong>[[*{linkPhotoUpload}]]</li>

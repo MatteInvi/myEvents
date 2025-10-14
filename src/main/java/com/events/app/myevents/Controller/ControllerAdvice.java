@@ -21,7 +21,7 @@ public class ControllerAdvice {
 
         if (authentication != null && authentication.isAuthenticated()) {
             Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
-            model.addAttribute("user", utenteLoggato.get());
+            model.addAttribute("userLogged", utenteLoggato.get());
         }
     }
 

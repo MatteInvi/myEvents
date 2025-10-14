@@ -114,6 +114,7 @@ ul{
   width: 30%;
 }
 
+/* Foto profilo da info */
 .profile-photo{
   width: 150px;
   height: 150px;
@@ -122,6 +123,30 @@ ul{
   margin: 5px 0px 5px 0px;
 }
 
+/* Icona foto profilo navbar */
+#icon-profile-img{
+  width: 40px;
+  border-radius: 50%;
+}
+
+#info-user{
+  display: inline;
+}
+
+
+
+@media screen and (max-width: 992px ) {
+
+  /* Icona sito  */
+#navbar-icon{
+  margin-top:10px;
+}
+
+#info-user{
+  display: block;
+}
+  
+}
 
 
 

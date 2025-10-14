@@ -7,7 +7,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <img class="mx-1" th:src="@{/img/logo.jpg}" alt="logo" width="30" height="30">
+        <img id="navbar-icon" class="mx-1" th:src="@{/img/logo.jpg}" alt="logo" width="30" height="30">
         <ul sec:authorize="isAuthenticated()" class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" th:href="@{/}">Home</a>
@@ -43,6 +43,13 @@
 
 
         <div sec:authorize="isAuthenticated()">
+          <div id="info-user">
+            <p style="display: inline;"><strong>Ciao [[${userLogged.name}]]!</strong></p>
+            <img th:if="${userLogged.linkProfilePhoto}" id="icon-profile-img" th:src="${userLogged.linkProfilePhoto}"
+              alt="foto profilo">
+            <img th:unless="${userLogged.linkProfilePhoto}" id="icon-profile-img" th:src="@{/img/profilo-alt.png}"
+              alt="foto profilo">
+          </div>
           <form class="d-inline" th:action="@{/logout}" method="POST">
             <button type="submit" class="btn btn-primary">Logout</button>
           </form>
