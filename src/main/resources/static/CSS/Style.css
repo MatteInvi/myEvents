@@ -3,6 +3,10 @@ body {
   color: whitesmoke;
 }
 
+ul{
+  padding: 0;
+}
+
 .container {
   background-color: rgba(0, 0, 0, 0.5);
   width: 80%;
@@ -109,6 +113,16 @@ body {
 #preview-invite{
   width: 30%;
 }
+
+.profile-photo{
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: block;
+  margin: 5px 0px 5px 0px;
+}
+
+
 
 
 

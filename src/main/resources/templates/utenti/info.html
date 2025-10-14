@@ -10,12 +10,41 @@
 
             <h5 class="titolo">Informazioni utente</h5>
 
+            <img th:src="*{linkProfilePhoto}" class="profile-photo">
+
+
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Carica foto profilo               
+            </button>
+             <h4 style="color: red;" th:text="${error}"></h4>
+             <h4 style="color: green" th:text="${success}"></h4>
+
+
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Carica foto profilo</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" th:action="@{/user/profilePhoto}"  enctype="multipart/form-data">
+                                <input class="form-control" type="file" name="file" id="fileInput" accept="image/*">
+                                <button class="btn btn-primary my-2" type="submit">Carica</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
             <ul class="list_info">
                 <li class="elemento_lista"><strong>ID: </strong>[[*{id}]]</li>
                 <li class="elemento_lista"><strong>Nome: </strong>[[*{name}]]</li>
                 <li class="elemento_lista"><strong>Cognome: </strong>[[*{surname}]]</li>
                 <li class="elemento_lista"><strong>Email: </strong>[[*{email}]]</li>
-                <li class="elemento_lista"><strong>Ruolo: </strong> 
+                <li class="elemento_lista"><strong>Ruolo: </strong>
                     <span th:each="role : ${user.roles}">[[${role.nome}]] </span>
                 </li>
 

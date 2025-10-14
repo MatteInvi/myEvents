@@ -1,8 +1,11 @@
 package com.events.app.myevents.Controller;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -23,8 +26,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.events.app.myevents.Model.Role;
 import com.events.app.myevents.Model.User;
 import com.events.app.myevents.Model.authToken;
@@ -40,6 +46,13 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/user")
 public class UserController {
+
+
+
+    // Dichiarazione piattaforma su cui salvare foto
+
+    @Autowired
+    Cloudinary cloudinary;
 
     @Autowired
     RoleRepository roleRepository;
@@ -68,7 +81,7 @@ public class UserController {
                 if (search != null && !search.isEmpty()) {
                     users = userRepository.findByNameContainingIgnoreCase(search);
                 } else {
-                    users= userRepository.findAll();
+                    users = userRepository.findAll();
 
                 }
                 model.addAttribute("users", users);
@@ -231,6 +244,7 @@ public class UserController {
         }
 
         // Settaggio informazioni non modificabili
+        userForm.setLinkProfilePhoto(utenteLoggato.get().getLinkProfilePhoto());
         userForm.setLinkInvite(utenteLoggato.get().getLinkInvite());
         userForm.setVerified(utenteLoggato.get().getVerified());
         userForm.setLinkPhotoUpload(utenteLoggato.get().getLinkPhotoUpload());
@@ -238,6 +252,45 @@ public class UserController {
         userForm.setPassword(passwordEncoder.encode(userForm.getPassword()));
         userRepository.save(userForm);
         return "utenti/info";
+    }
+
+    // Modifica foto profilo
+    @PostMapping("/profilePhoto")
+    public String profilePhoto(@RequestParam MultipartFile file, RedirectAttributes model,
+            Authentication authentication) {
+
+        Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
+        try {
+            if (file.isEmpty()) {
+                model.addFlashAttribute("error", "Nessun file selezionato");
+                model.addFlashAttribute("user", utenteLoggato.get());
+                return "redirect:/user/info";
+            }
+
+            // Carico il file su Cloudinary
+            Map uploadResult = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    ObjectUtils.asMap("folder", "myEventsPhoto/profile/" + utenteLoggato.get().getId()));
+
+            // Info del file caricato
+            Map<String, Object> fileInfo = new HashMap<>();
+            fileInfo.put("url", uploadResult.get("secure_url"));
+            fileInfo.put("publicId", uploadResult.get("public_id"));
+            fileInfo.put("name", file.getOriginalFilename());
+
+            // Aggiungo al model per la view
+            model.addFlashAttribute("success", "Caricamento avvenuto con successo!");
+            model.addFlashAttribute("user", utenteLoggato.get());
+
+            utenteLoggato.get().setLinkProfilePhoto(uploadResult.get("secure_url").toString());
+            userRepository.save(utenteLoggato.get());
+
+        } catch (IOException e) {
+            model.addFlashAttribute("error", "Errore durante il caricamento: " + e.getMessage());
+            model.addFlashAttribute("user", utenteLoggato.get());
+        }
+
+        return "redirect:/user/info";
     }
 
 }

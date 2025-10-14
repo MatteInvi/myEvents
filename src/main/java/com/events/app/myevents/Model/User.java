@@ -55,7 +55,17 @@ public class User {
 
     private String linkInvite;
 
+    private String linkProfilePhoto;
+
     // Getter e setter
+
+    public String getLinkProfilePhoto() {
+        return this.linkProfilePhoto;
+    }
+
+    public void setLinkProfilePhoto(String linkProfilePhoto) {
+        this.linkProfilePhoto = linkProfilePhoto;
+    }
 
     public String getLinkInvite() {
         return this.linkInvite;
