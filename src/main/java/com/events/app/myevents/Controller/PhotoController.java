@@ -73,7 +73,7 @@ public class PhotoController {
             model.addAttribute("uploadedFile", fileInfo);
             model.addAttribute("user", utenteLoggato.get());
 
-            utenteLoggato.get().setLinkInvite(uploadResult.get("secure_url").toString());
+            // utenteLoggato.get().setLinkInvite(uploadResult.get("secure_url").toString());
             userRepository.save(utenteLoggato.get());
 
         } catch (IOException e) {
@@ -87,14 +87,6 @@ public class PhotoController {
 
 // Carico foto evento
 
-    // In caso si entri con utente loggato in automatico manda all'upload su l'id
-    // dell'utente
-    @GetMapping("/upload")
-    public String userPhoto(Model model, Authentication authentication) {
-        Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
-        model.addAttribute("userID", utenteLoggato.get().getId());
-        return "photo/uploadPhotos";
-    }
 
     // Manda l'upload all'id che si è messo nell'indirizzo
     @GetMapping("/upload/{id}")
@@ -110,13 +102,13 @@ public class PhotoController {
         try {
             // Creazione array per selezione di foto multiple, controllo che la selezione
             // non sia vuota
-            // e in fine carico foto sulla piattaforma
+            // e infine carico foto sulla piattaforma
             List<Map<String, Object>> uploadedFiles = new ArrayList<>();
 
             for (MultipartFile file : files) {
                 if (!file.isEmpty()) {
                     Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                            ObjectUtils.asMap("folder", "myWeddingPhoto/" + id));
+                            ObjectUtils.asMap("folder", "myEventsPhoto/" + id));
 
                     Map<String, Object> fileInfo = new HashMap<>();
                     fileInfo.put("url", uploadResult.get("secure_url"));

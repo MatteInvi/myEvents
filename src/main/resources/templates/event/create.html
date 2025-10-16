@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments/head :: head('Crea')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: nav}"></nav>
+
+    <main class="container my-2 py-5">
+        <h2 class="text-center">Crea un nuovo evento</h2>
+        <form  th:action="@{|/event/create|}" th:object="${event}" method="post">
+            <div class="mb-3">
+                <label class="form-label" for="">Nome evento:</label>
+                <input class="form-control" type="text" th:field="*{name}" th:errorClass="is-invalid">
+
+                <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback">
+                    <ul>
+                        <li th:each="error : ${#fields.errors('name')}" th:text="${error}"></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="">Descrizione: (Opzionale)</label>
+                <textarea class="form-control" type="text" th:field="*{description}" th:errorClass="is-invalid"></textarea>
+
+                <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback">
+                    <ul>
+                        <li th:each="error : ${#fields.errors('description')}" th:text="${error}"></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="">Data: </label>
+                <input class="form-control" type="datetime-local" th:field="*{date}" th:errorClass="is-invalid">
+
+                <div th:if="${#fields.hasErrors('date')}" class="invalid-feedback">
+                    <ul>
+                        <li th:each="error : ${#fields.errors('date')}" th:text="${error}"></li>
+                    </ul>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Crea</button>
+
+
+
+
+        </form>
+
+    </main>
+
+
+    <th:block th:insert="~{fragments/footer :: script}"></th:block>
+</body>
+
+</html>

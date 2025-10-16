@@ -30,6 +30,11 @@ public class Invited {
     @Email
     private String email;
 
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    @JsonBackReference
+    private Event event;
+
     @NotBlank(message = "Inserire lo stato")
     private String status;
 
@@ -41,7 +46,15 @@ public class Invited {
     @JsonBackReference
     private User user;
 
-    //Getter e Setter
+    // Getter e Setter
+
+    public Event getEvent() {
+        return this.event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 
     public User getUser() {
         return this.user;

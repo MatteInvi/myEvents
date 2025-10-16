@@ -111,7 +111,7 @@ public class InvitedController {
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
         // Invio email passando al service: invitato(per estrapolare i dati) e link dell'immagine invito per l'utente loggato 
         try {
-            emailService.inviteEmail(invited.get(), utenteLoggato.get().getLinkInvite());
+            // emailService.inviteEmail(invited.get(), utenteLoggato.get().getLinkInvite());
         } catch (Exception e) {
             model.addAttribute("message", "Errore nell'invio: " + e);
         }

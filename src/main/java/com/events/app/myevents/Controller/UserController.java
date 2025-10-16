@@ -195,8 +195,6 @@ public class UserController {
         User user = authToken.get().getUser();
         user.setVerified(true);
 
-        // Setto il link da mandare all'utente da condividere per poter salvare le foto
-        user.setLinkPhotoUpload(appUrl + "/photo/upload/" + user.getId());
 
         // Qui aggiorniamo l'utente nel db e resituiamo un messaggio di avvenuta
         // verifica
@@ -245,9 +243,7 @@ public class UserController {
 
         // Settaggio informazioni non modificabili
         userForm.setLinkProfilePhoto(utenteLoggato.get().getLinkProfilePhoto());
-        userForm.setLinkInvite(utenteLoggato.get().getLinkInvite());
         userForm.setVerified(utenteLoggato.get().getVerified());
-        userForm.setLinkPhotoUpload(utenteLoggato.get().getLinkPhotoUpload());
         userForm.setRoles(utenteLoggato.get().getRoles());
         userForm.setPassword(passwordEncoder.encode(userForm.getPassword()));
         userRepository.save(userForm);

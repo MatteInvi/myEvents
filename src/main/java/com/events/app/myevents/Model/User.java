@@ -49,13 +49,12 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private authToken authToken;
 
-    private String linkPhotoUpload;
-
-    private boolean verified = false;
-
-    private String linkInvite;
+    private boolean verified = false;    
 
     private String linkProfilePhoto;
+
+    @OneToMany (mappedBy = "user")
+    private List<Event> events;
 
     // Getter e setter
 
@@ -67,21 +66,6 @@ public class User {
         this.linkProfilePhoto = linkProfilePhoto;
     }
 
-    public String getLinkInvite() {
-        return this.linkInvite;
-    }
-
-    public void setLinkInvite(String linkInvite) {
-        this.linkInvite = linkInvite;
-    }
-
-    public String getLinkPhotoUpload() {
-        return this.linkPhotoUpload;
-    }
-
-    public void setLinkPhotoUpload(String linkPhotoUpload) {
-        this.linkPhotoUpload = linkPhotoUpload;
-    }
 
     public List<Invited> getInvited() {
         return this.invited;
