@@ -42,6 +42,8 @@ public class Event {
 
     private String linkInvitePhoto;
 
+    
+
     public Integer getId() {
         return this.id;
     }

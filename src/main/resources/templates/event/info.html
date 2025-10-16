@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments/head :: head('Info')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: nav}"></nav>
+
+    <main class="container my-2 py-5">
+        <h2 class="text-center">Informazioni dell'evento: </h2>
+        <div id="event-info" th:object="${event}">
+            <h5>Nome evento: </h5>
+            <p>[[*{name}]]</p>
+            <h5>Data: </h5>
+            <p th:text="*{#temporals.format(date, 'dd/MM/yyyy HH:mm')}"></p>
+            <h5>Descrizione: </h5>
+            <p>[[*{description}]]</p>
+            <h5>Lista invitati: </h5>
+            <p th:if="*{inviteds.size() > 0}" class="d-inline" th:each="invited : ${event.inviteds}" >[[${invited.name}]] [[${invited.surname}]] / </p>
+            <p th:unless="*{inviteds.size() > 0}">Non ci sono ancora invitati nella lista!</p>
+            <h5>Link per caricare foto dell'evento: </h5>
+            <p th:text="*{linkEventPhotos}"></p>
+            <h5>Link dell'invito:</h5>
+            <p th:text="*{linkInvitePhoto}"></p>
+            
+        </div>
+    </main>
+
+
+    <th:block th:insert="~{fragments/footer :: script}"></th:block>
+</body>
+
+</html>
