@@ -10,9 +10,19 @@ import com.events.app.myevents.Model.User;
 
 public interface InvitedRepository extends JpaRepository<Invited, Integer> {
 
-    public List<Invited> findByNameIgnoreCase(String name);
+    public List<Invited> findByNameContainingIgnoreCase(String name);
+
     public boolean existsByEmail(String email);
+
     public List<Invited> findByUser(User user);
+
     public List<Invited> findByUserAndNameContainingIgnoreCase(User user, String name);
+
+    public List<Invited> findByEventAndNameContainingIgnoreCase(Event event, String name);
+
     public List<Invited> findByEvent(Event event);
+
+    public List<Invited> findByUserAndEvent(User user, Event event);
+
+    public List<Invited> findByUserAndEventAndNameContainingIgnoreCase(User user, Event event, String name);
 }

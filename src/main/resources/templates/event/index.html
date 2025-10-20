@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmls:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments/head :: head('Eventi')}">
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+    <main class="container mt-5 py-5">
+        <div th:if="${message}">
+            <p class="text-center"><strong>[[${message}]]</strong></p>
+        </div>
+        <h2 class="text-center">Lista eventi</h2>
+
+        <div class="my-2" id="table-strument">
+            <!-- Sezione di ricerca per nome -->
+            <section th:if="${events.size > 0}" id="search" class="col-6">
+                <form class="d-flex justify-content-start" role="search">
+                    <div class="search-input">
+                        <input class="form-control me-2" type="search" placeholder="Search" name="search" />
+                    </div>
+                    <button class="btn btn-success" type="submit">Search</button>
+                </form>
+            </section>
+        </div>
+
+        <!-- Tabella indice degli eventi -->
+        <div th:if="${events.size > 0}">
+            <table class="table table-hover col-10 scrolling">
+                <thead>
+                    <tr>
+                        <th class="d-none d-lg-table-cell">ID</th>
+                        <th>Nome</th>
+                        <th>Data</th>
+                        <th>Descrizione</th>                    
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="event : ${events}" th:object="${event}">
+                        <td  th:text="*{id}"></td>
+                        <td th:text="*{name}"></td>
+                        <td th:text="*{date}"></td>
+                        <td th:text="*{description}"></td>
+                        <td class="text-center">
+
+                            <!-- Sezione pulsanti  -->
+                            <a class="btn btn-primary" th:href="@{|/event/info/*{id}|}">Mostra</a>
+                            <a class="btn btn-warning" th:href="@{|/event/edit/*{id}|}">Modifica</a>
+                        </td>
+                    </tr>
+                </tbody>
+
+
+
+            </table>
+        </div>
+        <div th:unless="${events.size > 0}">
+            <h3 class="text-center">Non ci sono eventi nella lista!</h3>
+        </div>
+
+    </main>
+    <script th:replace="~{fragments/footer :: script}"></script>
+
+</body>
+
+</html>

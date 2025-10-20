@@ -32,3 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 src/main/resources/application.properties
+hs_err_pid25816.log

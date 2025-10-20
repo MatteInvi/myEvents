@@ -5,7 +5,7 @@
 
 <body>
     <main class="container mt-5 py-5">
-        <form th:action="@{|/invited/edit/*{id}|}" th:object="${invited}" method="post">
+        <form th:action="@{|/invited/edit/*{id}/${event.id}|}" th:object="${invited}" method="post">
             <div class="mb-3">
                 <input type="hidden" th:field="*{id}">
                 <label for="name">Nome</label>

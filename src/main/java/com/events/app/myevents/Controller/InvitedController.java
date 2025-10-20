@@ -60,18 +60,15 @@ public class InvitedController {
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
             if (grantedAuthority.getAuthority().equals("ADMIN")) {
                 if (search != null && !search.isEmpty()) {
-                    inviteds = invitedRepository.findByNameIgnoreCase(search);
+                    inviteds = invitedRepository.findByEventAndNameContainingIgnoreCase(eventOptional.get(), search);
                 } else {
                     inviteds = invitedRepository.findByEvent(eventRepository.findById(id).get());
 
                 }
             } else if (grantedAuthority.getAuthority().equals("USER")) {
-                List<Invited> userInvited = invitedRepository.findByUser(userLogged.get());
-                for (Invited singleInvited : userInvited) {
-                    inviteds.add(singleInvited);
-                }
+                    inviteds = invitedRepository.findByUserAndEvent(userLogged.get(), eventOptional.get());
                 if (search != null && !search.isEmpty()) {
-                    inviteds = invitedRepository.findByUserAndNameContainingIgnoreCase(userLogged.get(), search);
+                    inviteds = invitedRepository.findByUserAndEventAndNameContainingIgnoreCase(userLogged.get(), eventOptional.get(),search);
                 }
 
             }
@@ -105,12 +102,6 @@ public class InvitedController {
             return "invited/create";
         }
 
-        if (invitedRepository.existsByEmail(formInvited.getEmail())) {
-            bindingResult.rejectValue("email", "error.invited", "Email già registrata da un altro utente");
-            model.addAttribute("event", eventOptional.get());
-            return "invited/create";
-
-        }
 
         formInvited.setId(null);
         formInvited.setUser(userLogged.get());
@@ -122,7 +113,8 @@ public class InvitedController {
 
     // Invio email con l'invito
     @PostMapping("/email/send/{idInvited}/{idEvent}")
-    public String emailSend(@PathVariable Integer idInvited,@PathVariable Integer idEvent, Model model, RedirectAttributes redirectAttributes,
+    public String emailSend(@PathVariable Integer idInvited, @PathVariable Integer idEvent, Model model,
+            RedirectAttributes redirectAttributes,
             Authentication authentication) {
         // Prendo i dati dell'invitato per mandare la mail personalizzata
         Optional<Invited> invited = invitedRepository.findById(idInvited);
@@ -142,42 +134,51 @@ public class InvitedController {
     }
 
     // Get per reindirizzare su modifica dati invitato
-    @GetMapping("edit/{id}")
-    public String edit(@PathVariable Integer id, Model model, Authentication authentication) {
+    @GetMapping("edit/{idInvited}/{idEvent}")
+    public String edit(@PathVariable Integer idInvited, @PathVariable Integer idEvent, Model model,
+            Authentication authentication) {
         Optional<User> loggedUser = userRepository.findByEmail(authentication.getName());
-        Optional<Invited> singleInvited = invitedRepository.findById(id);
+        Optional<Invited> singleInvited = invitedRepository.findById(idInvited);
+        Optional<Event> singleEvent = eventRepository.findById(idEvent);
+
         // Controllo che l'invitato si assegnato a questo utente (Se sei admin puoi
         // accedere sempre)
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
             if ((grantedAuthority.getAuthority().equals("ADMIN"))
                     || singleInvited.get().getUser() == loggedUser.get()) {
-                model.addAttribute("invited", invitedRepository.findById(id).get());
+                model.addAttribute("invited", singleInvited.get());
+                model.addAttribute("event", singleEvent.get());
             }
         }
 
-        return "/invited/edit";
+        return "invited/edit";
 
     }
 
     // Post per validare e modificare dati invitato
-    @PostMapping("edit/{id}")
-    public String update(@PathVariable Integer id, @Valid @ModelAttribute("invited") Invited formInvited,
-            BindingResult bindingResult, Model model) {
+    @PostMapping("edit/{idInvited}/{idEvent}")
+    public String update(@Valid @ModelAttribute("invited") Invited formInvited,
+            BindingResult bindingResult, Model model, @PathVariable Integer idInvited, @PathVariable Integer idEvent) {
 
-        Invited invited = invitedRepository.findById(id).get();
+        Invited invited = invitedRepository.findById(idInvited).get();
+        Event event = eventRepository.findById(idEvent).get();
+
         if (bindingResult.hasErrors()) {
+            model.addAttribute("event", event);
             return "invited/edit";
         }
 
+        formInvited.setEvent(invited.getEvent());
         formInvited.setUser(invited.getUser());
         invitedRepository.save(formInvited);
-        return "redirect:/invited";
+        return "redirect:/invited/index/" + event.getId();
 
     }
 
     // Chiamata post per eliminazione invitati
     @PostMapping("delete/{idInvited}/{idEvent}")
-    public String delete(@PathVariable Integer idInvited,@PathVariable Integer idEvent, Authentication authentication) {
+    public String delete(@PathVariable Integer idInvited, @PathVariable Integer idEvent,
+            Authentication authentication) {
         Optional<Invited> singleInvited = invitedRepository.findById(idInvited);
         Optional<Event> singleEvent = eventRepository.findById(idEvent);
         Optional<User> loggedUser = userRepository.findByEmail(authentication.getName());

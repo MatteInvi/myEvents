@@ -66,7 +66,7 @@
                         <td class="text-center">
 
                             <!-- Sezione pulsanti  -->
-                            <a class="btn btn-secondary" th:href="@{|/invited/edit/*{id}|}">Modifica </a>
+                            <a class="btn btn-secondary" th:href="@{|/invited/edit/*{id}/${event.id}|}">Modifica </a>
 
                             <form method="post" class="d-inline" th:action="@{|/invited/email/send/*{id}/${event.id}|}">
                                 <button type="submit" class="btn btn-primary">Invia invito</button>
