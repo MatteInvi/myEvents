@@ -16,7 +16,7 @@
             <h5>Descrizione: </h5>
             <p>[[*{description}]]</p>
             <h5>Lista invitati: </h5>
-            <p th:if="*{inviteds.size() > 0}" class="d-inline" th:each="invited : ${event.inviteds}" >[[${invited.name}]] [[${invited.surname}]] / </p>
+            <a th:href="@{|/invited/index/*{id}|}" class="btn btn-warning">Lista</a>
             <p th:unless="*{inviteds.size() > 0}">Non ci sono ancora invitati nella lista!</p>
             <h5>Link per caricare foto dell'evento: </h5>
             <p th:text="*{linkEventPhotos}"></p>

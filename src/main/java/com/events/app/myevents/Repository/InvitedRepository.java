@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.events.app.myevents.Model.Event;
 import com.events.app.myevents.Model.Invited;
 import com.events.app.myevents.Model.User;
 
@@ -13,5 +14,5 @@ public interface InvitedRepository extends JpaRepository<Invited, Integer> {
     public boolean existsByEmail(String email);
     public List<Invited> findByUser(User user);
     public List<Invited> findByUserAndNameContainingIgnoreCase(User user, String name);
-    
+    public List<Invited> findByEvent(Event event);
 }

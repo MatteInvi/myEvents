@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<head th:replace="~{fragments/head :: head('Modifica')}"></head>
+<head th:replace="~{fragments/head :: head('Aggiungi invitato')}"></head>
 
 <body>
+    <nav th:replace="~{fragments/navbar :: nav}"></nav>
     <main class="container mt-5 py-5">
-        <form th:action="@{|/invited/create|}" th:object="${invited}" method="post">
+        <form th:action="@{|/invited/create/${event.id}|}" th:object="${invited}" method="post">
             <div class="mb-3">
                 <label for="name">Nome</label>
                 <input type="text" id="name" class="form-control" th:field="*{name}" th:errorClass="is-invalid">
@@ -16,7 +17,7 @@
                     </ul>
                 </div>
             </div>
-            
+
             <div class="mb-3">
                 <label for="surnname">Cognome</label>
                 <input type="text" id="surname" class="form-control" th:field="*{surname}" th:errorClass="is-invalid">
