@@ -16,7 +16,7 @@
 
         <!-- Sezione caricamento foto -->
 
-        <form th:action="@{|/photo/upload/invite/${user.id}|}" method="post" enctype="multipart/form-data">
+        <form th:action="@{|/photo/upload/invite/${event.id}|}" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <input class="form-control" type="file" name="file" id="fileInput" accept="image/*">
             </div>
@@ -27,11 +27,11 @@
         <div class="preview-container d-block" id="preview"></div>
 
         <!-- Immagine invito se già caricato -->
-       <!----> <section th:if="${user.linkInvite}">
+        <section th:if="${event.linkInvite}">
             <h5>Invito caricato:</h5>
 
-            <img data-bs-toggle="modal" data-bs-target="#imageModal" th:attr="data-bs-image=${user.linkInvite}"
-                class="img-photo" th:src="${user.linkInvite}" style="max-width:200px; margin:10px" />
+            <img data-bs-toggle="modal" data-bs-target="#imageModal" th:attr="data-bs-image=${event.linkInvite}"
+                class="img-photo" th:src="${event.linkInvite}" style="max-width:200px; margin:10px" />
 
             <!-- Modal photo zoomed -->
             <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
@@ -43,7 +43,7 @@
                     </div>
                 </div>
             </div>
-        </section> 
+        </section>
 
         <!-- Sezione risultato caricamento -->
 

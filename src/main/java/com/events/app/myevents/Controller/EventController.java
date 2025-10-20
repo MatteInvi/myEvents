@@ -66,4 +66,12 @@ public class EventController {
         model.addAttribute("event", eventRepository.findById(id).get());
         return "event/info";
     }
+
+    // Indirizzo alla pagina di caricamento invito passando l'evento
+    @GetMapping("/invite/upload/{id}")
+    public String inviteUpload(Model model, @PathVariable Integer id){
+        model.addAttribute("event", eventRepository.findById(id).get());
+        return "photo/uploadInvite";
+    }
+
 }

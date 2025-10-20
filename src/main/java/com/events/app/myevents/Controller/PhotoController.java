@@ -20,7 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.events.app.myevents.Model.Event;
 import com.events.app.myevents.Model.User;
+import com.events.app.myevents.Repository.EventRepository;
 import com.events.app.myevents.Repository.UserRepository;
 
 @Controller
@@ -35,32 +37,30 @@ public class PhotoController {
     }
 
     @Autowired
+    EventRepository eventRepository;
+
+    @Autowired
     UserRepository userRepository;
 
-    // Caricamento foto invito
-    @GetMapping("/upload/invite")
-    public String invitePhoto(Model model, Authentication authentication) {
-        Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
-        model.addAttribute("user", utenteLoggato.get());
-        return "photo/uploadInvite";
-    }
-
+    // Caricamento foto invito (id evento)
     @PostMapping("/upload/invite/{id}")
     public String inviteUpload(@RequestParam MultipartFile file, Model model, @PathVariable Integer id,
             Authentication authentication) {
 
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
+        Optional<Event> eventOptional = eventRepository.findById(id);
         try {
             if (file.isEmpty()) {
                 model.addAttribute("error", "Nessun file selezionato");
-                model.addAttribute("user", utenteLoggato.get());
+                model.addAttribute("event", eventOptional.get());
                 return "photo/uploadInvite";
             }
 
             // Carico il file su Cloudinary
             Map uploadResult = cloudinary.uploader().upload(
                     file.getBytes(),
-                    ObjectUtils.asMap("folder", "myWeddingPhoto/invite/" + id));
+                    ObjectUtils.asMap("folder", "myEventsPhoto/invite/" + "user=" + utenteLoggato.get().getId()
+                            + "event=" + eventOptional.get().getId()));
 
             // Info del file caricato
             Map<String, Object> fileInfo = new HashMap<>();
@@ -71,27 +71,27 @@ public class PhotoController {
             // Aggiungo al model per la view
             model.addAttribute("success", "Caricamento avvenuto con successo!");
             model.addAttribute("uploadedFile", fileInfo);
-            model.addAttribute("user", utenteLoggato.get());
+            model.addAttribute("event", eventOptional.get());
 
-            // utenteLoggato.get().setLinkInvite(uploadResult.get("secure_url").toString());
-            userRepository.save(utenteLoggato.get());
+            eventOptional.get().setLinkInvite(uploadResult.get("secure_url").toString());
+            eventRepository.save(eventOptional.get());
 
         } catch (IOException e) {
             model.addAttribute("error", "Errore durante il caricamento: " + e.getMessage());
-            model.addAttribute("user",  utenteLoggato.get());
+            model.addAttribute("user", utenteLoggato.get());
         }
 
         return "photo/uploadInvite";
 
     }
 
-// Carico foto evento
-
+    // Carico foto evento
 
     // Manda l'upload all'id che si è messo nell'indirizzo
     @GetMapping("/upload/{id}")
-    public String photo(@PathVariable("id") Integer id, Model model) {
-        model.addAttribute("userID", id);
+    public String photo(@PathVariable Integer id, Model model) {
+        Optional<Event> eventOptional = eventRepository.findById(id);
+        model.addAttribute("event", eventOptional.get());
         return "photo/uploadPhotos";
     }
 
@@ -99,6 +99,7 @@ public class PhotoController {
     @PostMapping("/upload/{id}")
     public String upload(@RequestParam MultipartFile[] files, Model model, @PathVariable Integer id) {
 
+        Optional<Event> eventOptional = eventRepository.findById(id);
         try {
             // Creazione array per selezione di foto multiple, controllo che la selezione
             // non sia vuota
@@ -108,7 +109,8 @@ public class PhotoController {
             for (MultipartFile file : files) {
                 if (!file.isEmpty()) {
                     Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                            ObjectUtils.asMap("folder", "myEventsPhoto/" + id));
+                            ObjectUtils.asMap("folder", "myEventsPhoto/photos/" + "user=" + eventOptional.get().getUser().getId()
+                                    + "event=" + eventOptional.get().getId()));
 
                     Map<String, Object> fileInfo = new HashMap<>();
                     fileInfo.put("url", uploadResult.get("secure_url"));
@@ -125,11 +127,11 @@ public class PhotoController {
             if (uploadedFiles.size() > 0) {
                 model.addAttribute("success", "Caricamento avvenuto con successo!");
                 model.addAttribute("uploadedFiles", uploadedFiles);
-                model.addAttribute("userID", id);
+                model.addAttribute("event", eventOptional.get());
                 return "photo/uploadPhotos";
             } else {
                 model.addAttribute("error", "Nessun file selezionato");
-                model.addAttribute("userID", id);
+                model.addAttribute("event", eventOptional.get());
                 return "photo/uploadPhotos";
 
             }
@@ -144,7 +146,7 @@ public class PhotoController {
 
     }
 
-//Galleria foto caricaate
+    // Galleria foto caricaate
 
     @GetMapping("/gallery")
     public String showGallery(Model model, Authentication authentication) throws Exception {

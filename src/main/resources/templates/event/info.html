@@ -21,7 +21,9 @@
             <h5>Link per caricare foto dell'evento: </h5>
             <p th:text="*{linkEventPhotos}"></p>
             <h5>Link dell'invito:</h5>
-            <p th:text="*{linkInvitePhoto}"></p>
+            <p th:text="*{linkInvite}">               
+            </p>
+            <a th:href="@{|/event/invite/upload/*{id}|}" class="btn btn-success">Carica invito</a>
             
         </div>
     </main>

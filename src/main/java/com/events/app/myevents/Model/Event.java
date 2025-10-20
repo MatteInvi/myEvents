@@ -40,7 +40,7 @@ public class Event {
 
     private String linkEventPhotos;
 
-    private String linkInvitePhoto;
+    private String linkInvite;
 
     
 
@@ -100,12 +100,12 @@ public class Event {
         this.linkEventPhotos = linkEventPhotos;
     }
 
-    public String getLinkInvitePhoto() {
-        return this.linkInvitePhoto;
+    public String getLinkInvite() {
+        return this.linkInvite;
     }
 
-    public void setLinkInvitePhoto(String linkInvitePhoto) {
-        this.linkInvitePhoto = linkInvitePhoto;
+    public void setLinkInvite(String linkInvite) {
+        this.linkInvite = linkInvite;
     }
 
 }

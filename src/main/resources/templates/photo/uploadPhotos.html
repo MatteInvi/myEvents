@@ -15,7 +15,7 @@
         
         <!-- Sezione caricamento foto -->
 
-        <form th:action="@{|/photo/upload/${userID}|}" method="post" enctype="multipart/form-data">
+        <form th:action="@{|/photo/upload/${event.id}|}" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label class="form-label" for="photo">Carica la tua foto</label>
                 <input class="form-control" type="file" name="files" id="fileInput" accept="image/*" multiple>
