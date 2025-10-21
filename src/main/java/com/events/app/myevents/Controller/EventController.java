@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.events.app.myevents.Model.Event;
 import com.events.app.myevents.Model.User;
@@ -39,16 +40,27 @@ public class EventController {
 
     // Indice
     @GetMapping()
-    public String index(Model model, Authentication authentication) {
+    public String index(Model model, Authentication authentication, @RequestParam(required = false) String query) {
         List<Event> events = new ArrayList<>();
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
-        for (GrantedAuthority auth : authentication.getAuthorities()) {
-            if (auth.getAuthority().equals("ADMIN")) {
-                events = eventRepository.findAll();
-            } else if (auth.getAuthority().equals("USER")) {
-                events = eventRepository.findByUser(userLogged.get());
-            }
-
+        // Mostro tutti gli eventi all'admin o gli eventi appartenenti all'utente
+        // loggato
+     
+            for (GrantedAuthority auth : authentication.getAuthorities()) {
+                if (auth.getAuthority().equals("ADMIN")){
+                    if (query != null && !query.isEmpty()){
+                        events = eventRepository.findByNameContainingIgnoreCase(query);
+                    } else {
+                        events = eventRepository.findAll();
+                    }
+                } else if (auth.getAuthority().equals("USER")){
+                    if (query!= null && !query.isEmpty()){
+                        events = eventRepository.findByUserAndNameContainingIgnoreCase(userLogged.get(), query);
+                    } else {
+                        events = eventRepository.findByUser(userLogged.get());
+                    }
+                }
+            
         }
 
         model.addAttribute("events", events);

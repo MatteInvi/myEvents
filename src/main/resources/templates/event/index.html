@@ -17,7 +17,7 @@
             <section th:if="${events.size > 0}" id="search" class="col-6">
                 <form class="d-flex justify-content-start" role="search">
                     <div class="search-input">
-                        <input class="form-control me-2" type="search" placeholder="Search" name="search" />
+                        <input class="form-control me-2" type="search" placeholder="Search" name="query" />
                     </div>
                     <button class="btn btn-success" type="submit">Search</button>
                 </form>
@@ -40,7 +40,7 @@
                     <tr th:each="event : ${events}" th:object="${event}">
                         <td  th:text="*{id}"></td>
                         <td th:text="*{name}"></td>
-                        <td th:text="*{date}"></td>
+                        <td th:text="*{#temporals.format(date, 'dd/MM/yyyy HH:mm')}"></td>
                         <td th:text="*{description}"></td>
                         <td class="text-center">
 

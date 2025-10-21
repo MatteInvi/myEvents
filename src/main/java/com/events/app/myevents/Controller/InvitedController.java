@@ -65,10 +65,12 @@ public class InvitedController {
                     inviteds = invitedRepository.findByEvent(eventRepository.findById(id).get());
 
                 }
-            } else if (grantedAuthority.getAuthority().equals("USER")) {
-                    inviteds = invitedRepository.findByUserAndEvent(userLogged.get(), eventOptional.get());
+            } else if (grantedAuthority.getAuthority().equals("USER")
+                    && eventOptional.get().getUser().equals(userLogged.get())) {
+                inviteds = invitedRepository.findByUserAndEvent(userLogged.get(), eventOptional.get());
                 if (search != null && !search.isEmpty()) {
-                    inviteds = invitedRepository.findByUserAndEventAndNameContainingIgnoreCase(userLogged.get(), eventOptional.get(),search);
+                    inviteds = invitedRepository.findByUserAndEventAndNameContainingIgnoreCase(userLogged.get(),
+                            eventOptional.get(), search);
                 }
 
             }
@@ -81,12 +83,24 @@ public class InvitedController {
 
     // Indirizzio alla pagina di creazione
     @GetMapping("/create/{id}")
-    public String create(Model model, @PathVariable Integer id) {
+    public String create(Model model, @PathVariable Integer id, Authentication authentication) {
         Optional<Event> eventOptional = eventRepository.findById(id);
-        Invited invited = new Invited();
-        model.addAttribute("invited", invited);
-        model.addAttribute("event", eventOptional.get());
-        return "invited/create";
+        Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
+
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            if (grantedAuthority.getAuthority().equals("ADMIN") || (grantedAuthority.getAuthority().equals("USER")
+                    && eventOptional.get().getUser().equals(userLogged.get()))) {
+                Invited invited = new Invited();
+                model.addAttribute("invited", invited);
+                model.addAttribute("event", eventOptional.get());
+                return "invited/create";
+
+            }
+        }
+
+        model.addAttribute("message", "Non puoi accedere a questa pagina");
+        return "pages/message";
+
     }
 
     // Chiamata post con validazione per creazione invitati
@@ -103,6 +117,7 @@ public class InvitedController {
         }
 
 
+
         formInvited.setId(null);
         formInvited.setUser(userLogged.get());
         formInvited.setEvent(eventOptional.get());
@@ -116,6 +131,7 @@ public class InvitedController {
     public String emailSend(@PathVariable Integer idInvited, @PathVariable Integer idEvent, Model model,
             RedirectAttributes redirectAttributes,
             Authentication authentication) {
+                
         // Prendo i dati dell'invitato per mandare la mail personalizzata
         Optional<Invited> invited = invitedRepository.findById(idInvited);
 
