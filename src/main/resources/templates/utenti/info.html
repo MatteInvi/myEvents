@@ -14,14 +14,14 @@
             <img th:if="*{linkProfilePhoto}" th:src="*{linkProfilePhoto}" class="profile-photo" alt="foto profilo">
             <img th:unless="*{linkProfilePhoto}" th:src="@{/img/profilo-alt.png}" class="profile-photo"
                 alt="foto profilo">
-
+<!-- Bottone per far aprire la modale -->
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                 Carica foto profilo
             </button>
             <h4 style="color: red;" th:text="${error}"></h4>
             <h4 style="color: green" th:text="${success}"></h4>
 
-
+<!-- Modale caricamento foto profilo -->
             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -31,7 +31,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form method="post" th:action="@{/user/profilePhoto}" enctype="multipart/form-data">
+                            <form method="post" th:action="@{|/user/profilePhoto/*{id}|}" enctype="multipart/form-data">
                                 <input class="form-control" type="file" name="file" id="fileInput" accept="image/*">
                                 <button class="btn btn-primary my-2" type="submit">Carica</button>
                             </form>
@@ -40,6 +40,8 @@
                     </div>
                 </div>
             </div>
+
+<!-- Info utente -->
 
             <ul class="list_info">
                 <li class="elemento_lista"><strong>ID: </strong>[[*{id}]]</li>

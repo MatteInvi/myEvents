@@ -73,11 +73,11 @@
                             </form>
 
 
-
+                            <!-- Bottone per far apparire la modale di elminazione -->
                             <button type="button" data-bs-toggle="modal" th:data-bs-target="'#delete-modal-' + *{id}"
                                 class="btn btn-warning">Elimina </button>
                         </td>
-
+                        <!-- Modale di elminazione -->
                         <div class="modal fade" th:id="'delete-modal-' + *{id}" data-bs-backdrop="static"
                             data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                             aria-hidden="true">

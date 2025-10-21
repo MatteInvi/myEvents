@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.events.app.myevents.Model.Event;
+import com.events.app.myevents.Model.Invited;
 import com.events.app.myevents.Model.User;
 import com.events.app.myevents.Repository.EventRepository;
+import com.events.app.myevents.Repository.InvitedRepository;
 import com.events.app.myevents.Repository.UserRepository;
 
 import jakarta.validation.Valid;
@@ -28,6 +30,9 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/event")
 public class EventController {
+
+    @Autowired
+    InvitedRepository invitedRepository;
 
     @Autowired
     EventRepository eventRepository;
@@ -38,6 +43,8 @@ public class EventController {
     @Value("${app.url}")
     private String appUrl;
 
+
+
     // Indice
     @GetMapping()
     public String index(Model model, Authentication authentication, @RequestParam(required = false) String query) {
@@ -45,22 +52,22 @@ public class EventController {
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
         // Mostro tutti gli eventi all'admin o gli eventi appartenenti all'utente
         // loggato
-     
-            for (GrantedAuthority auth : authentication.getAuthorities()) {
-                if (auth.getAuthority().equals("ADMIN")){
-                    if (query != null && !query.isEmpty()){
-                        events = eventRepository.findByNameContainingIgnoreCase(query);
-                    } else {
-                        events = eventRepository.findAll();
-                    }
-                } else if (auth.getAuthority().equals("USER")){
-                    if (query!= null && !query.isEmpty()){
-                        events = eventRepository.findByUserAndNameContainingIgnoreCase(userLogged.get(), query);
-                    } else {
-                        events = eventRepository.findByUser(userLogged.get());
-                    }
+
+        for (GrantedAuthority auth : authentication.getAuthorities()) {
+            if (auth.getAuthority().equals("ADMIN")) {
+                if (query != null && !query.isEmpty()) {
+                    events = eventRepository.findByNameContainingIgnoreCase(query);
+                } else {
+                    events = eventRepository.findAll();
                 }
-            
+            } else if (auth.getAuthority().equals("USER")) {
+                if (query != null && !query.isEmpty()) {
+                    events = eventRepository.findByUserAndNameContainingIgnoreCase(userLogged.get(), query);
+                } else {
+                    events = eventRepository.findByUser(userLogged.get());
+                }
+            }
+
         }
 
         model.addAttribute("events", events);
@@ -157,6 +164,27 @@ public class EventController {
     public String inviteUpload(Model model, @PathVariable Integer id) {
         model.addAttribute("event", eventRepository.findById(id).get());
         return "photo/uploadInvite";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String delete(Authentication authentication, Model model, @PathVariable Integer id) {
+        Optional<Event> eventOptional = eventRepository.findById(id);
+        Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
+
+        for (GrantedAuthority auth : authentication.getAuthorities()) {
+            if (auth.getAuthority().equals("ADMIN") || (auth.getAuthority().equals("USER")
+                    && eventOptional.get().getUser().equals(utenteLoggato.get()))) {
+                        for (Invited invited : eventOptional.get().getInviteds()) {
+                            invitedRepository.delete(invited);                            
+                        }
+                eventRepository.delete(eventOptional.get());
+                return "redirect:/event";
+            }
+
+        }
+        model.addAttribute("message", "Non sei autorizzato ad eliminare questo evento!");
+        return "pages/message";
+
     }
 
 }

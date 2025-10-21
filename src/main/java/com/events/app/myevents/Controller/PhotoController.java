@@ -49,6 +49,8 @@ public class PhotoController {
 
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
         Optional<Event> eventOptional = eventRepository.findById(id);
+
+        
         try {
             if (file.isEmpty()) {
                 model.addAttribute("error", "Nessun file selezionato");
@@ -79,13 +81,14 @@ public class PhotoController {
         } catch (IOException e) {
             model.addAttribute("error", "Errore durante il caricamento: " + e.getMessage());
             model.addAttribute("user", utenteLoggato.get());
+            return "photo/uploadInvite";
         }
 
         return "photo/uploadInvite";
 
     }
 
-    // Carico foto evento
+// Carico foto evento
 
     // Manda l'upload all'id che si è messo nell'indirizzo
     @GetMapping("/upload/{id}")

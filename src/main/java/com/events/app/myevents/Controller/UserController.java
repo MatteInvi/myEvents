@@ -47,8 +47,6 @@ import jakarta.validation.Valid;
 @RequestMapping("/user")
 public class UserController {
 
-
-
     // Dichiarazione piattaforma su cui salvare foto
 
     @Autowired
@@ -96,24 +94,18 @@ public class UserController {
     // Show user (per ADMIN)
     @GetMapping("/show/{id}")
     public String show(@PathVariable Integer id, Model model, Authentication authentication) {
-        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
-            if (grantedAuthority.getAuthority().equals("ADMIN")) {
+
+        Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
+        Optional<User> utenteOptional = userRepository.findById(id);
+        for (GrantedAuthority auth : authentication.getAuthorities()) {
+            if (auth.getAuthority().equals("ADMIN")
+                    || (auth.getAuthority().equals("USER") && utenteOptional.get().equals(utenteLoggato.get()))) {
                 model.addAttribute("user", userRepository.findById(id).get());
                 return "utenti/info";
             }
         }
         model.addAttribute("message", "Non sei autorizzato a vedere questa pagina!");
         return "pages/message";
-    }
-
-    // info User loggato
-    @GetMapping("/info")
-    public String info(Model model, Authentication authentication) {
-        Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
-
-        model.addAttribute("user", utenteLoggato.get());
-
-        return "utenti/info";
     }
 
     // Create User
@@ -195,7 +187,6 @@ public class UserController {
         User user = authToken.get().getUser();
         user.setVerified(true);
 
-
         // Qui aggiorniamo l'utente nel db e resituiamo un messaggio di avvenuta
         // verifica
         userRepository.save(user);
@@ -234,59 +225,80 @@ public class UserController {
 
     @PostMapping("/edit/{id}")
     public String update(@Valid @ModelAttribute("user") User userForm, BindingResult bindingResult,
-            Authentication authentication) {
+            Authentication authentication, @PathVariable Integer id, Model model) {
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
+        Optional<User> utenteOptional = userRepository.findById(id);
+        
 
         if (bindingResult.hasErrors()) {
             return "utenti/edit";
         }
 
-        // Settaggio informazioni non modificabili
-        userForm.setLinkProfilePhoto(utenteLoggato.get().getLinkProfilePhoto());
-        userForm.setVerified(utenteLoggato.get().getVerified());
-        userForm.setRoles(utenteLoggato.get().getRoles());
-        userForm.setPassword(passwordEncoder.encode(userForm.getPassword()));
-        userRepository.save(userForm);
-        return "utenti/info";
+        for (GrantedAuthority auth : authentication.getAuthorities()) {
+            if (auth.getAuthority().equals("ADMIN")
+                    || (auth.getAuthority().equals("USER") && utenteLoggato.get().equals(utenteOptional.get()))) {
+
+                // Settaggio informazioni non modificabili
+                userForm.setLinkProfilePhoto(utenteLoggato.get().getLinkProfilePhoto());
+                userForm.setVerified(utenteLoggato.get().getVerified());
+                userForm.setRoles(utenteLoggato.get().getRoles());
+                userForm.setPassword(passwordEncoder.encode(userForm.getPassword()));
+                userRepository.save(userForm);
+                return "redirect:/user/show/" + utenteOptional.get().getId();
+
+            }
+
+        }
+        model.addAttribute("message", "Non sei autorizzato a effettuare questa operazione");
+        return "pages/message";
+
     }
 
     // Modifica foto profilo
-    @PostMapping("/profilePhoto")
+    @PostMapping("/profilePhoto/{id}")
     public String profilePhoto(@RequestParam MultipartFile file, RedirectAttributes model,
-            Authentication authentication) {
-
+            Authentication authentication, @PathVariable Integer id) {
+        Optional<User> utenteOptional = userRepository.findById(id);
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
-        try {
-            if (file.isEmpty()) {
-                model.addFlashAttribute("error", "Nessun file selezionato");
-                model.addFlashAttribute("user", utenteLoggato.get());
-                return "redirect:/user/info";
+
+        for (GrantedAuthority auth : authentication.getAuthorities()) {
+            if (auth.getAuthority().equals("ADMIN")
+                    || (auth.getAuthority().equals("USER") && utenteOptional.get().equals(utenteLoggato.get()))) {
+
+                try {
+                    if (file.isEmpty()) {
+                        model.addFlashAttribute("error", "Nessun file selezionato");
+                        model.addFlashAttribute("user", utenteOptional.get());
+                        return "redirect:/user/show/" + utenteOptional.get().getId();
+                    }
+
+                    // Carico il file su Cloudinary
+                    Map uploadResult = cloudinary.uploader().upload(
+                            file.getBytes(),
+                            ObjectUtils.asMap("folder", "myEventsPhoto/profile/" + utenteOptional.get().getId()));
+
+                    // Info del file caricato
+                    Map<String, Object> fileInfo = new HashMap<>();
+                    fileInfo.put("url", uploadResult.get("secure_url"));
+                    fileInfo.put("publicId", uploadResult.get("public_id"));
+                    fileInfo.put("name", file.getOriginalFilename());
+
+                    // Aggiungo al model per la view
+                    model.addFlashAttribute("success", "Caricamento avvenuto con successo!");
+                    model.addFlashAttribute("user", utenteOptional.get());
+
+                    utenteOptional.get().setLinkProfilePhoto(uploadResult.get("secure_url").toString());
+                    userRepository.save(utenteOptional.get());
+
+                } catch (IOException e) {
+                    model.addFlashAttribute("error", "Errore durante il caricamento: " + e.getMessage());
+                    model.addFlashAttribute("user", utenteOptional.get());
+                }
+
             }
 
-            // Carico il file su Cloudinary
-            Map uploadResult = cloudinary.uploader().upload(
-                    file.getBytes(),
-                    ObjectUtils.asMap("folder", "myEventsPhoto/profile/" + utenteLoggato.get().getId()));
-
-            // Info del file caricato
-            Map<String, Object> fileInfo = new HashMap<>();
-            fileInfo.put("url", uploadResult.get("secure_url"));
-            fileInfo.put("publicId", uploadResult.get("public_id"));
-            fileInfo.put("name", file.getOriginalFilename());
-
-            // Aggiungo al model per la view
-            model.addFlashAttribute("success", "Caricamento avvenuto con successo!");
-            model.addFlashAttribute("user", utenteLoggato.get());
-
-            utenteLoggato.get().setLinkProfilePhoto(uploadResult.get("secure_url").toString());
-            userRepository.save(utenteLoggato.get());
-
-        } catch (IOException e) {
-            model.addFlashAttribute("error", "Errore durante il caricamento: " + e.getMessage());
-            model.addFlashAttribute("user", utenteLoggato.get());
         }
-
-        return "redirect:/user/info";
+        return "redirect:/user/show/" + utenteOptional.get().getId();
     }
 
 }

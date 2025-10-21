@@ -32,13 +32,13 @@
                         <th class="d-none d-lg-table-cell">ID</th>
                         <th>Nome</th>
                         <th>Data</th>
-                        <th>Descrizione</th>                    
+                        <th>Descrizione</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="event : ${events}" th:object="${event}">
-                        <td  th:text="*{id}"></td>
+                        <td th:text="*{id}"></td>
                         <td th:text="*{name}"></td>
                         <td th:text="*{#temporals.format(date, 'dd/MM/yyyy HH:mm')}"></td>
                         <td th:text="*{description}"></td>
@@ -47,6 +47,41 @@
                             <!-- Sezione pulsanti  -->
                             <a class="btn btn-primary" th:href="@{|/event/info/*{id}|}">Mostra</a>
                             <a class="btn btn-warning" th:href="@{|/event/edit/*{id}|}">Modifica</a>
+                            <!-- Bottone con modale per conferma di elminazione -->
+                            <button type="button" data-bs-toggle="modal" th:data-bs-target="'#delete-modal-' + *{id}"
+                                class="btn btn-secondary">Elimina </button>
+
+                            <div class="modal fade" th:id="'delete-modal-' + *{id}" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Eliminare
+                                                l'evento:
+                                                <strong>"[[*{name}]]"</strong>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>
+                                                Sei sicuro di voler eliminare l'evento
+                                                <strong>[[*{name}]]</strong>
+                                                <br>
+                                                Con id:
+                                                <strong>[[*{id}]]</strong>?
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Chiudi</button>
+                                            <form th:action="@{|/event/delete/*{id}|}" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-danger btn">Elimina</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- Fine sezione eliminazione -->
                         </td>
                     </tr>
                 </tbody>
@@ -54,6 +89,8 @@
 
 
             </table>
+
+
         </div>
         <div th:unless="${events.size > 0}">
             <h3 class="text-center">Non ci sono eventi nella lista!</h3>

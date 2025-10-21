@@ -123,6 +123,7 @@ body {
 
 /* Icona foto profilo navbar */
 #icon-profile-img{
+  height: 40px;
   width: 40px;
   border-radius: 50%;
 }
