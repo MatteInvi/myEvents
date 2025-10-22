@@ -20,6 +20,7 @@
             <p th:unless="*{inviteds.size() > 0}">Non ci sono ancora invitati nella lista!</p>
             <h5>Link per caricare foto dell'evento: </h5>
             <p th:text="*{linkEventPhotos}"></p>
+            <a class="btn btn-primary" th:href="@{|/photo/gallery/*{id}|}">Gallery foto</a>
             <h5>Link dell'invito:</h5>
             <p th:text="*{linkInvite}">               
             </p>

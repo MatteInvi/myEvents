@@ -86,12 +86,13 @@ public class UserController {
                 return "utenti/index";
             }
         }
+
         model.addAttribute("message", "Non sei autorizzato a vedere questa pagina!");
         return "pages/message";
 
     }
 
-    // Show user (per ADMIN)
+    // Show user
     @GetMapping("/show/{id}")
     public String show(@PathVariable Integer id, Model model, Authentication authentication) {
 
@@ -104,6 +105,7 @@ public class UserController {
                 return "utenti/info";
             }
         }
+
         model.addAttribute("message", "Non sei autorizzato a vedere questa pagina!");
         return "pages/message";
     }
@@ -122,7 +124,6 @@ public class UserController {
         // Se la mail non è registrata nel db viene salvato l'utente senza verifica
         if (userRepository.existsByEmail(formUser.getEmail())) {
             bindingResult.rejectValue("email", "error.user", "Email già in uso");
-
             return "utenti/register";
         }
 
@@ -143,25 +144,23 @@ public class UserController {
         formUser.setPassword(passwordEncoder.encode(formUser.getPassword()));
         userRepository.save(formUser);
 
-        // Generiamo un token di verifica settando i parametri dello stesso
+        // Generiamo un token di verifica settando i parametri dello stesso e salviamo nel db
         String token = UUID.randomUUID().toString();
         authToken authToken = new authToken();
         authToken.setToken(token);
         authToken.setUser(formUser);
         authToken.setExpireDate(LocalDateTime.now().plusHours(24));
         formUser.setAuthToken(authToken);
-
-        // Salviamo il token nel db e restituiamo un invito a confermare la
-        // registrazione
         tokenRepository.save(authToken);
-        model.addAttribute("message", "Controllare la mail per confermare la registrazione!");
+        
 
         // Inviamo mail all'utente passando i dati del form compilato(per recuperare la
         // mail) e il token generato
         try {
             emailService.registerEmail(formUser, authToken);
+            model.addAttribute("message", "Controllare la mail per confermare la registrazione!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "Errore nell'invio:" + e);
+            model.addAttribute("message", "Errore nell'invio: " + e);
         }
         return "pages/message";
 
@@ -228,7 +227,6 @@ public class UserController {
             Authentication authentication, @PathVariable Integer id, Model model) {
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
         Optional<User> utenteOptional = userRepository.findById(id);
-        
 
         if (bindingResult.hasErrors()) {
             return "utenti/edit";
@@ -239,10 +237,10 @@ public class UserController {
                     || (auth.getAuthority().equals("USER") && utenteLoggato.get().equals(utenteOptional.get()))) {
 
                 // Settaggio informazioni non modificabili
-                userForm.setLinkProfilePhoto(utenteLoggato.get().getLinkProfilePhoto());
-                userForm.setVerified(utenteLoggato.get().getVerified());
-                userForm.setRoles(utenteLoggato.get().getRoles());
-                userForm.setPassword(passwordEncoder.encode(userForm.getPassword()));
+                userForm.setLinkProfilePhoto(utenteOptional.get().getLinkProfilePhoto());
+                userForm.setVerified(utenteOptional.get().getVerified());
+                userForm.setRoles(utenteOptional.get().getRoles());
+                userForm.setPassword(passwordEncoder.encode(utenteOptional.get().getPassword()));
                 userRepository.save(userForm);
                 return "redirect:/user/show/" + utenteOptional.get().getId();
 
@@ -257,7 +255,7 @@ public class UserController {
     // Modifica foto profilo
     @PostMapping("/profilePhoto/{id}")
     public String profilePhoto(@RequestParam MultipartFile file, RedirectAttributes model,
-            Authentication authentication, @PathVariable Integer id) {
+            Authentication authentication, @PathVariable Integer id, Model model2) {
         Optional<User> utenteOptional = userRepository.findById(id);
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
 
@@ -293,12 +291,16 @@ public class UserController {
                 } catch (IOException e) {
                     model.addFlashAttribute("error", "Errore durante il caricamento: " + e.getMessage());
                     model.addFlashAttribute("user", utenteOptional.get());
+                    return "redirect:/user/show/" + utenteOptional.get().getId();
                 }
-
+                return "redirect:/user/show/" + utenteOptional.get().getId();
             }
 
         }
-        return "redirect:/user/show/" + utenteOptional.get().getId();
+
+        model2.addAttribute("message", "Non sei autorizzato a effettuare questa operazione");
+        return "pages/message";
+
     }
 
 }

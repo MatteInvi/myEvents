@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,11 +31,8 @@ import com.events.app.myevents.Repository.UserRepository;
 public class PhotoController {
 
     // Dichiarazione piattaforma su cui salvare foto
-    private final Cloudinary cloudinary;
-
-    public PhotoController(Cloudinary cloudinary) {
-        this.cloudinary = cloudinary;
-    }
+    @Autowired
+    Cloudinary cloudinary;
 
     @Autowired
     EventRepository eventRepository;
@@ -50,45 +48,52 @@ public class PhotoController {
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
         Optional<Event> eventOptional = eventRepository.findById(id);
 
-        
-        try {
-            if (file.isEmpty()) {
-                model.addAttribute("error", "Nessun file selezionato");
-                model.addAttribute("event", eventOptional.get());
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            if ((grantedAuthority.getAuthority().equals("ADMIN"))
+                    || (grantedAuthority.getAuthority().equals("USER")
+                            && eventOptional.get().getUser().equals(utenteLoggato.get()))) {
+                try {
+                    if (file.isEmpty()) {
+                        model.addAttribute("error", "Nessun file selezionato");
+                        model.addAttribute("event", eventOptional.get());
+                        return "photo/uploadInvite";
+                    }
+
+                    // Carico il file su Cloudinary
+                    Map uploadResult = cloudinary.uploader().upload(
+                            file.getBytes(),
+                            ObjectUtils.asMap("folder", "myEventsPhoto/invite/" + "user=" + utenteLoggato.get().getId()
+                                    + "event=" + eventOptional.get().getId()));
+
+                    // Info del file caricato
+                    Map<String, Object> fileInfo = new HashMap<>();
+                    fileInfo.put("url", uploadResult.get("secure_url"));
+                    fileInfo.put("publicId", uploadResult.get("public_id"));
+                    fileInfo.put("name", file.getOriginalFilename());
+
+                    // Aggiungo al model per la view
+                    model.addAttribute("success", "Caricamento avvenuto con successo!");
+                    model.addAttribute("uploadedFile", fileInfo);
+                    model.addAttribute("event", eventOptional.get());
+
+                    eventOptional.get().setLinkInvite(uploadResult.get("secure_url").toString());
+                    eventRepository.save(eventOptional.get());
+
+                } catch (IOException e) {
+                    model.addAttribute("error", "Errore durante il caricamento: " + e.getMessage());
+                    model.addAttribute("user", utenteLoggato.get());
+                    return "photo/uploadInvite";
+                }
+
                 return "photo/uploadInvite";
             }
-
-            // Carico il file su Cloudinary
-            Map uploadResult = cloudinary.uploader().upload(
-                    file.getBytes(),
-                    ObjectUtils.asMap("folder", "myEventsPhoto/invite/" + "user=" + utenteLoggato.get().getId()
-                            + "event=" + eventOptional.get().getId()));
-
-            // Info del file caricato
-            Map<String, Object> fileInfo = new HashMap<>();
-            fileInfo.put("url", uploadResult.get("secure_url"));
-            fileInfo.put("publicId", uploadResult.get("public_id"));
-            fileInfo.put("name", file.getOriginalFilename());
-
-            // Aggiungo al model per la view
-            model.addAttribute("success", "Caricamento avvenuto con successo!");
-            model.addAttribute("uploadedFile", fileInfo);
-            model.addAttribute("event", eventOptional.get());
-
-            eventOptional.get().setLinkInvite(uploadResult.get("secure_url").toString());
-            eventRepository.save(eventOptional.get());
-
-        } catch (IOException e) {
-            model.addAttribute("error", "Errore durante il caricamento: " + e.getMessage());
-            model.addAttribute("user", utenteLoggato.get());
-            return "photo/uploadInvite";
         }
-
-        return "photo/uploadInvite";
+        model.addAttribute("message", "Non sei autorizzato ad accedere a questa pagina");
+        return "pages/message";
 
     }
 
-// Carico foto evento
+    // Carico foto evento
 
     // Manda l'upload all'id che si è messo nell'indirizzo
     @GetMapping("/upload/{id}")
@@ -112,8 +117,9 @@ public class PhotoController {
             for (MultipartFile file : files) {
                 if (!file.isEmpty()) {
                     Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                            ObjectUtils.asMap("folder", "myEventsPhoto/photos/" + "user=" + eventOptional.get().getUser().getId()
-                                    + "event=" + eventOptional.get().getId()));
+                            ObjectUtils.asMap("folder",
+                                    "myEventsPhoto/photos/" + "user/" + eventOptional.get().getUser().getId()
+                                            + "/event/" + eventOptional.get().getId()));
 
                     Map<String, Object> fileInfo = new HashMap<>();
                     fileInfo.put("url", uploadResult.get("secure_url"));
@@ -151,23 +157,36 @@ public class PhotoController {
 
     // Galleria foto caricaate
 
-    @GetMapping("/gallery")
-    public String showGallery(Model model, Authentication authentication) throws Exception {
+    @GetMapping("/gallery/{id}")
+    public String showGallery(Model model, Authentication authentication, @PathVariable Integer id) throws Exception {
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
-        String folderUrl = "myWeddingPhoto/" + utenteLoggato.get().getId();
-        Map result = cloudinary.search()
-                .expression("folder:" + folderUrl)
-                .maxResults(30)
-                .execute();
+        Optional<Event> eventOptional = eventRepository.findById(id);
 
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> resources = (List<Map<String, Object>>) result.get("resources");
-        List<String> imageUrls = resources.stream()
-                .map(r -> (String) r.get("secure_url"))
-                .toList();
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            if ((grantedAuthority.getAuthority().equals("ADMIN"))
+                    || (grantedAuthority.getAuthority().equals("USER")
+                            && eventOptional.get().getUser().equals(utenteLoggato.get()))) {
 
-        model.addAttribute("images", imageUrls);
-        return "photo/gallery";
+                String folderUrl = "myEventsPhoto/photos/user/" + eventOptional.get().getUser().getId() + "/event/"
+                        + eventOptional.get().getId();
+                Map result = cloudinary.search()
+                        .expression("folder:" + folderUrl)
+                        .maxResults(30)
+                        .execute();
+
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> resources = (List<Map<String, Object>>) result.get("resources");
+                List<String> imageUrls = resources.stream()
+                        .map(r -> (String) r.get("secure_url"))
+                        .toList();
+
+                model.addAttribute("images", imageUrls);
+                return "photo/gallery";
+            }
+        }
+
+        model.addAttribute("message", "Pagina non trovata");
+        return "pages/message";
     }
 
 }

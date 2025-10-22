@@ -48,8 +48,7 @@ public class InvitedController {
     @Autowired
     UserRepository userRepository;
 
-    // Indice invitati con creazione nuovo inviato nel momento in cui si prema il
-    // bottone in pagina
+    // Indice invitati
     @GetMapping("/index/{id}")
     public String index(Model model, @RequestParam(required = false) String search, @PathVariable Integer id,
             Authentication authentication) {
@@ -81,7 +80,7 @@ public class InvitedController {
         return "invited/index";
     }
 
-    // Indirizzio alla pagina di creazione
+    // Indirizzo alla pagina di creazione
     @GetMapping("/create/{id}")
     public String create(Model model, @PathVariable Integer id, Authentication authentication) {
         Optional<Event> eventOptional = eventRepository.findById(id);
@@ -98,7 +97,7 @@ public class InvitedController {
             }
         }
 
-        model.addAttribute("message", "Non puoi accedere a questa pagina");
+        model.addAttribute("message", "Non sei autorizzato ad accedere a questa pagina");
         return "pages/message";
 
     }
@@ -116,13 +115,20 @@ public class InvitedController {
             return "invited/create";
         }
 
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            if (grantedAuthority.getAuthority().equals("ADMIN") || (grantedAuthority.getAuthority().equals("USER")
+                    && eventOptional.get().getUser().equals(userLogged.get()))) {
 
+                formInvited.setId(null);
+                formInvited.setUser(userLogged.get());
+                formInvited.setEvent(eventOptional.get());
+                invitedRepository.save(formInvited);
+                return "redirect:/invited/index/" + eventOptional.get().getId();
+            }
+        }
 
-        formInvited.setId(null);
-        formInvited.setUser(userLogged.get());
-        formInvited.setEvent(eventOptional.get());
-        invitedRepository.save(formInvited);
-        return "redirect:/invited/index/" + eventOptional.get().getId();
+        model.addAttribute("message", "Non sei autorizzato ad accedere a questa pagina");
+        return "pages/message";
 
     }
 
@@ -131,7 +137,7 @@ public class InvitedController {
     public String emailSend(@PathVariable Integer idInvited, @PathVariable Integer idEvent, Model model,
             RedirectAttributes redirectAttributes,
             Authentication authentication) {
-                
+
         // Prendo i dati dell'invitato per mandare la mail personalizzata
         Optional<Invited> invited = invitedRepository.findById(idInvited);
 
@@ -161,52 +167,68 @@ public class InvitedController {
         // accedere sempre)
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
             if ((grantedAuthority.getAuthority().equals("ADMIN"))
-                    || singleInvited.get().getUser() == loggedUser.get()) {
+                    || (grantedAuthority.getAuthority().equals("USER")
+                            && singleInvited.get().getUser().equals(loggedUser.get()))) {
                 model.addAttribute("invited", singleInvited.get());
                 model.addAttribute("event", singleEvent.get());
+                return "invited/edit";
             }
         }
 
-        return "invited/edit";
+        model.addAttribute("message", "Non sei autorizzato ad accedere a questa pagina");
+        return "pages/message";
 
     }
 
     // Post per validare e modificare dati invitato
     @PostMapping("edit/{idInvited}/{idEvent}")
     public String update(@Valid @ModelAttribute("invited") Invited formInvited,
-            BindingResult bindingResult, Model model, @PathVariable Integer idInvited, @PathVariable Integer idEvent) {
+            BindingResult bindingResult, Model model, @PathVariable Integer idInvited, @PathVariable Integer idEvent,
+            Authentication authentication) {
 
-        Invited invited = invitedRepository.findById(idInvited).get();
-        Event event = eventRepository.findById(idEvent).get();
-
+        Optional<User> loggedUser = userRepository.findByEmail(authentication.getName());
+        Optional<Invited> singleInvited = invitedRepository.findById(idInvited);
+        Optional<Event> singleEvent = eventRepository.findById(idEvent);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("event", event);
+            model.addAttribute("event", singleEvent.get());
             return "invited/edit";
         }
 
-        formInvited.setEvent(invited.getEvent());
-        formInvited.setUser(invited.getUser());
-        invitedRepository.save(formInvited);
-        return "redirect:/invited/index/" + event.getId();
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            if ((grantedAuthority.getAuthority().equals("ADMIN"))
+                    || (grantedAuthority.getAuthority().equals("USER")
+                            && singleInvited.get().getUser().equals(loggedUser.get()))) {
+
+                formInvited.setEvent(singleInvited.get().getEvent());
+                formInvited.setUser(singleInvited.get().getUser());
+                invitedRepository.save(formInvited);
+                return "redirect:/invited/index/" + singleEvent.get().getId();
+            }
+        }
+
+        model.addAttribute("message", "Non sei autorizzato ad accedere a questa pagina");
+        return "pages/message";
 
     }
 
     // Chiamata post per eliminazione invitati
     @PostMapping("delete/{idInvited}/{idEvent}")
     public String delete(@PathVariable Integer idInvited, @PathVariable Integer idEvent,
-            Authentication authentication) {
+            Authentication authentication, Model model) {
+
         Optional<Invited> singleInvited = invitedRepository.findById(idInvited);
         Optional<Event> singleEvent = eventRepository.findById(idEvent);
         Optional<User> loggedUser = userRepository.findByEmail(authentication.getName());
 
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
             if ((grantedAuthority.getAuthority().equals("ADMIN"))
-                    || singleInvited.get().getUser() == loggedUser.get()) {
+                    || (grantedAuthority.getAuthority().equals("USER") && singleInvited.get().getUser().equals(loggedUser.get()))) {
                 invitedRepository.delete(singleInvited.get());
-
+                return "redirect:/invited/index/" + singleEvent.get().getId();
             }
         }
 
-        return "redirect:/invited/index/" + singleEvent.get().getId();
+        model.addAttribute("message", "Non sei autorizzato ad accedere a questa pagina");
+        return "pages/message";
     }
 }

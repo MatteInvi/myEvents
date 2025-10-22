@@ -43,8 +43,6 @@ public class EventController {
     @Value("${app.url}")
     private String appUrl;
 
-
-
     // Indice
     @GetMapping()
     public String index(Model model, Authentication authentication, @RequestParam(required = false) String query) {
@@ -113,11 +111,10 @@ public class EventController {
                 model.addAttribute("event", eventRepository.findById(idEvent).get());
                 return "event/edit";
                 // Se è un utente verifico che l'evento appartenga a lui
-            } else if (auth.getAuthority().equals("USER")) {
-                if (eventOptional.get().getUser().equals(userLogged.get())) {
-                    model.addAttribute("event", eventRepository.findById(idEvent).get());
-                    return "event/edit";
-                }
+            } else if (auth.getAuthority().equals("USER") && eventOptional.get().getUser().equals(userLogged.get())) {
+                model.addAttribute("event", eventRepository.findById(idEvent).get());
+                return "event/edit";
+
             }
         }
         model.addAttribute("message", "Non puoi accedere a questa pagina");
@@ -130,23 +127,25 @@ public class EventController {
         Optional<Event> eventOptional = eventRepository.findById(idEvent);
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
 
+        // Settaggio paramentri non modificabili
         event.setUser(eventOptional.get().getUser());
         event.setId(idEvent);
         event.setInviteds(eventOptional.get().getInviteds());
         event.setLinkInvite(eventOptional.get().getLinkInvite());
         event.setLinkEventPhotos(eventOptional.get().getLinkEventPhotos());
-
+        // Controllo errori
         if (bindingResult.hasErrors()) {
             return "event/edit";
         }
+        // Controllo authority
         for (GrantedAuthority auth : authentication.getAuthorities()) {
             if (auth.getAuthority().equals("ADMIN")
                     || (auth.getAuthority().equals("USER") && eventOptional.get().getUser().equals(userLogged.get()))) {
-
                 eventRepository.save(event);
                 return "redirect:/event";
             }
         }
+
         model.addAttribute("message", "Non puoi modificare questo evento");
         return "pages/message";
 
@@ -154,16 +153,41 @@ public class EventController {
 
     // Show
     @GetMapping("/info/{id}")
-    public String show(Model model, @PathVariable("id") Integer id) {
-        model.addAttribute("event", eventRepository.findById(id).get());
-        return "event/info";
+    public String show(Model model, @PathVariable Integer id, Authentication authentication) {
+        Optional<Event> eventOptional = eventRepository.findById(id);
+        Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
+
+        for (GrantedAuthority auth : authentication.getAuthorities()) {
+            if (auth.getAuthority().equals("ADMIN")
+                    || (auth.getAuthority().equals("USER") && eventOptional.get().getUser().equals(userLogged.get()))) {
+                model.addAttribute("event", eventRepository.findById(id).get());
+                return "event/info";
+            }
+
+        }
+
+        model.addAttribute("message", "Non puoi visualizzare questo evento");
+        return "pages/message";
+
     }
 
     // Indirizzo alla pagina di caricamento invito passando l'evento
     @GetMapping("/invite/upload/{id}")
-    public String inviteUpload(Model model, @PathVariable Integer id) {
-        model.addAttribute("event", eventRepository.findById(id).get());
-        return "photo/uploadInvite";
+    public String inviteUpload(Model model, @PathVariable Integer id, Authentication authentication) {
+        Optional<Event> eventOptional = eventRepository.findById(id);
+        Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
+
+        for (GrantedAuthority auth : authentication.getAuthorities()) {
+            if (auth.getAuthority().equals("ADMIN")
+                    || (auth.getAuthority().equals("USER") && eventOptional.get().getUser().equals(userLogged.get()))) {
+                model.addAttribute("event", eventRepository.findById(id).get());
+                return "photo/uploadInvite";
+            }
+
+        }
+
+        model.addAttribute("message", "Non puoi caricare l'invito per questo evento");
+        return "pages/message";
     }
 
     @PostMapping("/delete/{id}")
@@ -174,9 +198,9 @@ public class EventController {
         for (GrantedAuthority auth : authentication.getAuthorities()) {
             if (auth.getAuthority().equals("ADMIN") || (auth.getAuthority().equals("USER")
                     && eventOptional.get().getUser().equals(utenteLoggato.get()))) {
-                        for (Invited invited : eventOptional.get().getInviteds()) {
-                            invitedRepository.delete(invited);                            
-                        }
+                for (Invited invited : eventOptional.get().getInviteds()) {
+                    invitedRepository.delete(invited);
+                }
                 eventRepository.delete(eventOptional.get());
                 return "redirect:/event";
             }

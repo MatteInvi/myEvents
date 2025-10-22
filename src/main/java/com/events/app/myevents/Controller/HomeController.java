@@ -69,15 +69,17 @@ public class HomeController {
                 utenteLoggato.get().setAuthToken(authToken);
 
                 tokenRepository.save(authToken);
-                model.addAttribute("message", "Controllare la mail per confermare la registrazione");
+              
 
                 // Inviamo una nuova mail con il token di verifica
                 try {
                     emailService.registerEmail(utenteLoggato.get(), authToken);
+                    model.addAttribute("message", "Controllare la mail per confermare la registrazione");
                 } catch (Exception e) {
                     model.addAttribute("message", "Errore nell'invio: " + e);
                 }
                 return "pages/message";
+                
             // Altrimemti invito l'utente a confermare tramite il token precedentemente invitato
             } else {
                 model.addAttribute("message", "Conferma l'account per poter utilizzare le funzioni");
