@@ -12,7 +12,7 @@
         </div>
         <h2 class="text-center">Lista eventi</h2>
 
-        <div class="my-2" id="table-strument">
+        <div class="my-2 d-flex justify-content-between" id="table-strument">
             <!-- Sezione di ricerca per nome -->
             <section th:if="${events.size > 0}" id="search" class="col-6">
                 <form class="d-flex justify-content-start" role="search">
@@ -22,6 +22,10 @@
                     <button class="btn btn-success" type="submit">Search</button>
                 </form>
             </section>
+            <!-- Bottone creazione nuovo evento -->
+             <section>
+                <a class="btn btn-warning" th:href="@{/event/create}">Crea un nuovo evento</a>
+             </section>
         </div>
 
         <!-- Tabella indice degli eventi -->

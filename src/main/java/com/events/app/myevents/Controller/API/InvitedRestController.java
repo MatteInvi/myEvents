@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.events.app.myevents.Model.Invited;
 import com.events.app.myevents.Model.User;
+import com.events.app.myevents.Repository.EventRepository;
 import com.events.app.myevents.Repository.InvitedRepository;
 import com.events.app.myevents.Repository.RoleRepository;
 import com.events.app.myevents.Repository.UserRepository;
@@ -25,7 +26,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/invited")
-@CrossOrigin(origins = {"http://127.0.0.1:5500", "http://localhost:5500"})
+@CrossOrigin(origins = {"http://127.0.0.1:5500", "http://localhost:5500", "http://localhost:5173"})
 public class InvitedRestController {
     
    @Autowired
@@ -40,11 +41,13 @@ public class InvitedRestController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    EventRepository eventRepository;
+
 //Lista invitati per utente    
-    @GetMapping("/index/{id}")
-    public ResponseEntity<List<Invited>> index(@PathVariable Integer id){
-        Optional<User> singleUser = userRepository.findById(id);
-        List<Invited> listInvited = invitedRepository.findByUser(singleUser.get());
+    @GetMapping("/index/{idEvent}")
+    public ResponseEntity<List<Invited>> index(@PathVariable Integer idEvent){
+        List<Invited> listInvited = eventRepository.findById(idEvent).get().getInviteds();
         if (listInvited.size() > 0){
             return new ResponseEntity<>(listInvited, HttpStatus.OK);
         }
@@ -63,6 +66,8 @@ public class InvitedRestController {
         invitedRepository.save(invited);
         return new ResponseEntity<>(invited, HttpStatus.OK);
     }    
+
+    
 
 
 

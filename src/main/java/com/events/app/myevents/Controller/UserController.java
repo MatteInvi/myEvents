@@ -126,6 +126,11 @@ public class UserController {
             bindingResult.rejectValue("email", "error.user", "Email già in uso");
             return "utenti/register";
         }
+        if (!formUser.getPassword().equals(formUser.getConfirmPassword())) {
+            bindingResult.rejectValue("password", "error.user", "Le password non coincidono");
+            bindingResult.rejectValue("confirmPassword", "error.user", "Le password non coincidono");
+            return "utenti/register";
+        }
 
         if (bindingResult.hasErrors()) {
             return "utenti/register";
@@ -142,9 +147,11 @@ public class UserController {
 
         // Setto password Encoder e salvo utente nel db
         formUser.setPassword(passwordEncoder.encode(formUser.getPassword()));
+        formUser.setConfirmPassword(passwordEncoder.encode(formUser.getConfirmPassword()));
         userRepository.save(formUser);
 
-        // Generiamo un token di verifica settando i parametri dello stesso e salviamo nel db
+        // Generiamo un token di verifica settando i parametri dello stesso e salviamo
+        // nel db
         String token = UUID.randomUUID().toString();
         authToken authToken = new authToken();
         authToken.setToken(token);
@@ -152,7 +159,6 @@ public class UserController {
         authToken.setExpireDate(LocalDateTime.now().plusHours(24));
         formUser.setAuthToken(authToken);
         tokenRepository.save(authToken);
-        
 
         // Inviamo mail all'utente passando i dati del form compilato(per recuperare la
         // mail) e il token generato
@@ -228,6 +234,17 @@ public class UserController {
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
         Optional<User> utenteOptional = userRepository.findById(id);
 
+        if (!userForm.getPassword().equals(userForm.getConfirmPassword())) {
+            bindingResult.rejectValue("password", "error.user", "Le password non coincidono");
+            bindingResult.rejectValue("confirmPassword", "error.user", "Le password non coincidono");
+            return "utenti/edit";
+        }
+
+        if (userRepository.existsByEmailAndIdNot(userForm.getEmail(), userForm.getId())) {
+            bindingResult.rejectValue("email", "error.user", "Email già in uso");
+            return "utenti/edit";
+        }
+
         if (bindingResult.hasErrors()) {
             return "utenti/edit";
         }
@@ -241,6 +258,7 @@ public class UserController {
                 userForm.setVerified(utenteOptional.get().getVerified());
                 userForm.setRoles(utenteOptional.get().getRoles());
                 userForm.setPassword(passwordEncoder.encode(utenteOptional.get().getPassword()));
+                userForm.setConfirmPassword(passwordEncoder.encode(userForm.getConfirmPassword()));
                 userRepository.save(userForm);
                 return "redirect:/user/show/" + utenteOptional.get().getId();
 
@@ -302,5 +320,22 @@ public class UserController {
         return "pages/message";
 
     }
+
+    //Recupero password
+    @GetMapping("/passwordRecovery")
+    String passwordRecovery(){
+        return "utenti/passwordRecovery";
+    }
+
+    @PostMapping("/passwordRecovery")
+    String passwordRecoverySend(){
+
+        
+        return "redirect:/";
+    }
+
+
+    // Invio token di recupero password
+    //Quando si clicca sul link si viene reindirizzati ad una pagina che ti  fa scegliere la nuova password
 
 }

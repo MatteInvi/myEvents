@@ -39,6 +39,8 @@ public class User {
     @NotBlank(message = "Inserisci una password")
     private String password;
 
+    private String confirmPassword;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
@@ -57,6 +59,24 @@ public class User {
     private List<Event> events;
 
     // Getter e setter
+
+
+    public String getConfirmPassword() {
+        return this.confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public List<Event> getEvents() {
+        return this.events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
+    }
+
 
     public String getLinkProfilePhoto() {
         return this.linkProfilePhoto;

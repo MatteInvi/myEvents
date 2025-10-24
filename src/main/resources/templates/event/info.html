@@ -22,8 +22,8 @@
             <p th:text="*{linkEventPhotos}"></p>
             <a class="btn btn-primary" th:href="@{|/photo/gallery/*{id}|}">Gallery foto</a>
             <h5>Link dell'invito:</h5>
-            <p th:text="*{linkInvite}">               
-            </p>
+            <p th:if="*{linkInvite}"><a th:href="*{linkInvite}">Link               
+            </a></p>
             <a th:href="@{|/event/invite/upload/*{id}|}" class="btn btn-success">Carica invito</a>
             
         </div>

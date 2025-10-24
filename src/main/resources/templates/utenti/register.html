@@ -43,11 +43,25 @@
 
             <div class="mb-3">
                 <label for="password">Password</label>
-                <input type="password" id="password" class="form-control" th:field="*{password}" th:errorClass="is-invalid">
+                <input type="password" id="password" class="form-control" th:field="*{password}"
+                    th:errorClass="is-invalid">
 
                 <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback">
                     <ul>
                         <li th:each="error : ${#fields.errors('password')}" th:text="${error}">
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmPassword">Ripeti Password</label>
+                <input type="password" id="confirmPassword" class="form-control" th:field="*{confirmPassword}"
+                    th:errorClass="is-invalid">
+
+                <div th:if="${#fields.hasErrors('confirmPassword')}" class="invalid-feedback">
+                    <ul>
+                        <li th:each="error : ${#fields.errors('confirmPassword')}" th:text="${error}">
                         </li>
                     </ul>
                 </div>

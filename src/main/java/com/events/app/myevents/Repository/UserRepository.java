@@ -10,6 +10,7 @@ import com.events.app.myevents.Model.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
     
     public Optional<User> findByEmail(String email);
+    public boolean existsByEmailAndIdNot(String email, Integer id);
     public boolean existsByEmail(String email);
     public List<User> findByNameContainingIgnoreCase(String name);
     

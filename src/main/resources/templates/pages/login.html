@@ -21,6 +21,7 @@
                 <div th:if="${param.error}" class="text-danger mt-1">Credenziali non valide!</div>
                 <div th:if="${param.logout}" class="text-success mt-1">Logout effettuato con successo!</div>
                 <div th:if="${confirm}" class="text-success mt-1">Registrazione confermata!</div>
+                <a th:href="@{/user/passwordRecovery}">Recupera password</a>
                 <div class="col mt-3">
                     <button type="submit" class="btn btn-primary col-12">Login</button>
                 </div>
