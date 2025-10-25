@@ -21,7 +21,7 @@ public class SecurityConfiguration {
         http
                
                 .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/","/css/*", "/js/*", "/img/**", "/user/confirm", "/user/create","/user/passwordRecovery", "/error/**").permitAll()
+                .requestMatchers("/","/css/*", "/js/*", "/img/**", "/user/confirm", "/user/create","/user/passwordRecovery","/user/reset-password", "/error/**").permitAll()
                 .requestMatchers("/user/**", "/event/**", "/invited/**", "/photo/**").hasAnyAuthority("ADMIN", "USER_VERIFIED")
                 .requestMatchers(HttpMethod.POST, "/**" , "/invited/**", "/photo/upload/invite", "/event/**").hasAnyAuthority("ADMIN","USER_VERIFIED")
                 

@@ -34,10 +34,12 @@ import com.cloudinary.utils.ObjectUtils;
 import com.events.app.myevents.Model.Role;
 import com.events.app.myevents.Model.User;
 import com.events.app.myevents.Model.authToken;
+import com.events.app.myevents.Repository.PasswordResetTokenRepository;
 import com.events.app.myevents.Repository.RoleRepository;
 import com.events.app.myevents.Repository.TokenRepository;
 import com.events.app.myevents.Repository.UserRepository;
 import com.events.app.myevents.Service.EmailService;
+import com.events.app.myevents.Service.PasswordResetService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -66,6 +68,12 @@ public class UserController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    PasswordResetService passwordResetService;
+
+    @Autowired
+    PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Value("${app.url}")
     private String appUrl;
@@ -321,21 +329,47 @@ public class UserController {
 
     }
 
-    //Recupero password
+    // Recupero password
     @GetMapping("/passwordRecovery")
-    String passwordRecovery(){
+    String passwordRecovery() {
         return "utenti/passwordRecovery";
     }
 
     @PostMapping("/passwordRecovery")
-    String passwordRecoverySend(){
-
-        
-        return "redirect:/";
+    String passwordRecoverySend(@RequestParam String email, RedirectAttributes redirectAttributes) {
+        passwordResetService.sendResetLink(email);
+        redirectAttributes.addFlashAttribute("message",
+                "Se l'email è registrata, riceverai un link per reimpostare la password.");
+        return "redirect:/user/passwordRecovery";
     }
 
+    @GetMapping("/reset-password")
+    public String showResetPasswordForm(@RequestParam("token") String token, Model model) {
+        var resetToken = passwordResetTokenRepository.findByToken(token)
+                .orElse(null);
+        if (resetToken == null || resetToken.isExpired()) {
+            model.addAttribute("error", "Token non valido o scaduto.");
+            return "utenti/reset-password"; // templates/reset-password-error.html
+        }
 
-    // Invio token di recupero password
-    //Quando si clicca sul link si viene reindirizzati ad una pagina che ti  fa scegliere la nuova password
+        model.addAttribute("token", token);
+        return "utenti/reset-password"; // templates/reset-password.html
+    }
 
+    // Gestisce il submit del form per impostare la nuova password
+    @PostMapping("/reset-password")
+    public String processResetPassword(
+            @RequestParam("token") String token,
+            @RequestParam("password") String password,
+            Model model) {
+
+        try {
+            passwordResetService.resetPassword(token, password);
+            model.addAttribute("message", "Password aggiornata con successo!");
+            return "utenti/reset-password"; // templates/reset-password-success.html
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "utenti/reset-password";
+        }
+    }
 }
