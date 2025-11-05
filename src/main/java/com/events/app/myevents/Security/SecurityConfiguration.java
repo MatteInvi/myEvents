@@ -19,17 +19,21 @@ public class SecurityConfiguration {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-               
+
                 .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/","/css/*", "/js/*", "/img/**", "/user/confirm", "/user/create","/user/passwordRecovery","/user/reset-password", "/error/**").permitAll()
-                .requestMatchers("/user/**", "/event/**", "/invited/**", "/photo/**").hasAnyAuthority("ADMIN", "USER_VERIFIED")
-                .requestMatchers(HttpMethod.POST, "/**" , "/invited/**", "/photo/upload/invite", "/event/**").hasAnyAuthority("ADMIN","USER_VERIFIED")
-                               
+                        .requestMatchers("/", "/css/*", "/js/*", "/img/**", "/user/confirm", "/user/create",
+                                "/user/passwordRecovery", "/user/reset-password", "/error/**")
+                        .permitAll()
+                        .requestMatchers("/user/**", "/event/**", "/invited/**", "/photo/**")
+                        .hasAnyAuthority("ADMIN", "USER_VERIFIED")
+                        .requestMatchers(HttpMethod.POST, "/**", "/invited/**", "/photo/upload/invite", "/event/**")
+                        .hasAnyAuthority("ADMIN", "USER_VERIFIED")
+
                 )
                 .formLogin(form -> form
-                    .loginPage("/login")
-                    .defaultSuccessUrl("/", true)
-                    .permitAll())
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
+                        .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")

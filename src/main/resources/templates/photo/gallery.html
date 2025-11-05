@@ -9,10 +9,15 @@
 
         <h2>Galleria</h2>
         <div class="galleria">
-            <div class="" th:each="img : ${images}">
+            <div class="photo-card" th:each="img : ${images}">
 
                 <img data-bs-toggle="modal" data-bs-target="#imageModal" th:attr="data-bs-image=${img}"
-                    class="img-photo" th:src="${img}" style="max-width:200px; margin:10px" />
+                    class="img-photo" th:src="${img}" />
+
+                <form th:action="@{/photo/deleteImage}" method="post">
+                    <input type="hidden" th:name="url" th:value="${img}" />
+                    <button id="photo-delete-button" class="btn btn-warning" type="submit">Elimina</button>
+                </form>
 
 
             </div>
@@ -25,6 +30,8 @@
                 <div class="modal-content bg-transparent border-0">
                     <div class="modal-body text-center">
                         <img id="modalImage" src="" class="img-fluid rounded shadow img-zoomed" />
+
+
                     </div>
                 </div>
             </div>

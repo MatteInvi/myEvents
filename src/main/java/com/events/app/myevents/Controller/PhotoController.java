@@ -25,6 +25,7 @@ import com.events.app.myevents.Model.Event;
 import com.events.app.myevents.Model.User;
 import com.events.app.myevents.Repository.EventRepository;
 import com.events.app.myevents.Repository.UserRepository;
+import com.events.app.myevents.Service.CloudinaryService;
 
 @Controller
 @RequestMapping("/photo")
@@ -39,6 +40,9 @@ public class PhotoController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    CloudinaryService cloudinaryService;
 
     // Caricamento foto invito (id evento)
     @PostMapping("/upload/invite/{id}")
@@ -189,10 +193,16 @@ public class PhotoController {
         return "pages/message";
     }
 
-    @PostMapping("/delete/{img_url}")
-    public String deletePhoto(Model model){
+    @PostMapping("/deleteImage")
+    public String deleteImage(@RequestParam("url") String imageUrl, Model model) throws IOException {
+        try {
+            cloudinaryService.deleteByUrl(imageUrl);
+        } catch (IOException e) {
+            model.addAttribute("message", "Errore nell'eliminazione: " + e);
+            return "pages/message";
+        }
+        return "redirect:/event";
 
-        return "redirect:/";
     }
 
 }

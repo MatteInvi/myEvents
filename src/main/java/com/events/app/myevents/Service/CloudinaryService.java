@@ -18,6 +18,7 @@ public class CloudinaryService {
 
     public Map deleteByUrl(String imageUrl) throws IOException {
         String publicId = CloudinaryUtils.extractPublicId(imageUrl);
+        System.out.println(publicId);
         return cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
     }
 }
