@@ -38,6 +38,7 @@ import com.events.app.myevents.Repository.PasswordResetTokenRepository;
 import com.events.app.myevents.Repository.RoleRepository;
 import com.events.app.myevents.Repository.TokenRepository;
 import com.events.app.myevents.Repository.UserRepository;
+import com.events.app.myevents.Service.CloudinaryService;
 import com.events.app.myevents.Service.EmailService;
 import com.events.app.myevents.Service.PasswordResetService;
 
@@ -74,6 +75,9 @@ public class UserController {
 
     @Autowired
     PasswordResetTokenRepository passwordResetTokenRepository;
+
+    @Autowired
+    CloudinaryService cloudinaryService;
 
     @Value("${app.url}")
     private String appUrl;
@@ -280,8 +284,8 @@ public class UserController {
 
     // Modifica foto profilo
     @PostMapping("/profilePhoto/{id}")
-    public String profilePhoto(@RequestParam MultipartFile file, RedirectAttributes model,
-            Authentication authentication, @PathVariable Integer id, Model model2) {
+    public String profilePhotoUpdate(@RequestParam MultipartFile file, RedirectAttributes redirectAttributes,
+            Authentication authentication, @PathVariable Integer id, Model model) {
         Optional<User> utenteOptional = userRepository.findById(id);
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
 
@@ -291,11 +295,16 @@ public class UserController {
 
                 try {
                     if (file.isEmpty()) {
-                        model.addFlashAttribute("error", "Nessun file selezionato");
-                        model.addFlashAttribute("user", utenteOptional.get());
+                        redirectAttributes.addFlashAttribute("error", "Nessun file selezionato");
+                        redirectAttributes.addFlashAttribute("user", utenteOptional.get());
                         return "redirect:/user/show/" + utenteOptional.get().getId();
                     }
 
+                    // Elimino foto precedente se esiste
+                    String imageUrl = utenteOptional.get().getLinkProfilePhoto();
+                    if (imageUrl != null) {
+                        cloudinaryService.deleteByUrl(imageUrl);
+                    }
                     // Carico il file su Cloudinary
                     Map uploadResult = cloudinary.uploader().upload(
                             file.getBytes(),
@@ -308,15 +317,15 @@ public class UserController {
                     fileInfo.put("name", file.getOriginalFilename());
 
                     // Aggiungo al model per la view
-                    model.addFlashAttribute("success", "Caricamento avvenuto con successo!");
-                    model.addFlashAttribute("user", utenteOptional.get());
+                    redirectAttributes.addFlashAttribute("success", "Caricamento avvenuto con successo!");
+                    redirectAttributes.addFlashAttribute("user", utenteOptional.get());
 
                     utenteOptional.get().setLinkProfilePhoto(uploadResult.get("secure_url").toString());
                     userRepository.save(utenteOptional.get());
 
                 } catch (IOException e) {
-                    model.addFlashAttribute("error", "Errore durante il caricamento: " + e.getMessage());
-                    model.addFlashAttribute("user", utenteOptional.get());
+                    redirectAttributes.addFlashAttribute("error", "Errore durante il caricamento: " + e.getMessage());
+                    redirectAttributes.addFlashAttribute("user", utenteOptional.get());
                     return "redirect:/user/show/" + utenteOptional.get().getId();
                 }
                 return "redirect:/user/show/" + utenteOptional.get().getId();
@@ -324,7 +333,7 @@ public class UserController {
 
         }
 
-        model2.addAttribute("message", "Non sei autorizzato a effettuare questa operazione");
+        model.addAttribute("message", "Non sei autorizzato a effettuare questa operazione");
         return "pages/message";
 
     }

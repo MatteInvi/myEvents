@@ -189,4 +189,10 @@ public class PhotoController {
         return "pages/message";
     }
 
+    @PostMapping("/delete/{img_url}")
+    public String deletePhoto(Model model){
+
+        return "redirect:/";
+    }
+
 }

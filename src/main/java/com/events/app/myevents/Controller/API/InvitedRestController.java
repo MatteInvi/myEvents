@@ -44,7 +44,7 @@ public class InvitedRestController {
     @Autowired
     EventRepository eventRepository;
 
-//Lista invitati per utente    
+//Lista invitati per evento   
     @GetMapping("/index/{idEvent}")
     public ResponseEntity<List<Invited>> index(@PathVariable Integer idEvent){
         List<Invited> listInvited = eventRepository.findById(idEvent).get().getInviteds();
