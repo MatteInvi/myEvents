@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -45,6 +46,7 @@ public class EventController {
 
     // Indice
     @GetMapping()
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String index(Model model, Authentication authentication, @RequestParam(required = false) String query) {
         List<Event> events = new ArrayList<>();
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
@@ -74,6 +76,7 @@ public class EventController {
 
     // Creazione
     @GetMapping("/create")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String create(Model model) {
         Event newEvent = new Event();
         model.addAttribute("event", newEvent);
@@ -102,6 +105,7 @@ public class EventController {
 
     // Modifica
     @GetMapping("/edit/{idEvent}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String edit(Model model, @PathVariable Integer idEvent, Authentication authentication) {
         Optional<Event> eventOptional = eventRepository.findById(idEvent);
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
@@ -122,6 +126,7 @@ public class EventController {
     }
 
     @PostMapping("/edit/{idEvent}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String update(@Valid @ModelAttribute("event") Event event, BindingResult bindingResult, Model model,
             Authentication authentication, @PathVariable Integer idEvent) {
         Optional<Event> eventOptional = eventRepository.findById(idEvent);
@@ -153,6 +158,7 @@ public class EventController {
 
     // Show
     @GetMapping("/info/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String show(Model model, @PathVariable Integer id, Authentication authentication) {
         Optional<Event> eventOptional = eventRepository.findById(id);
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
@@ -173,6 +179,7 @@ public class EventController {
 
     // Indirizzo alla pagina di caricamento invito passando l'evento
     @GetMapping("/invite/upload/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String inviteUpload(Model model, @PathVariable Integer id, Authentication authentication) {
         Optional<Event> eventOptional = eventRepository.findById(id);
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
@@ -191,6 +198,7 @@ public class EventController {
     }
 
     @PostMapping("/delete/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String delete(Authentication authentication, Model model, @PathVariable Integer id) {
         Optional<Event> eventOptional = eventRepository.findById(id);
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());

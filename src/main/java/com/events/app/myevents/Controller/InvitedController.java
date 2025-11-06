@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -50,6 +51,7 @@ public class InvitedController {
 
     // Indice invitati
     @GetMapping("/index/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String index(Model model, @RequestParam(required = false) String search, @PathVariable Integer id,
             Authentication authentication) {
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
@@ -82,6 +84,7 @@ public class InvitedController {
 
     // Indirizzo alla pagina di creazione
     @GetMapping("/create/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String create(Model model, @PathVariable Integer id, Authentication authentication) {
         Optional<Event> eventOptional = eventRepository.findById(id);
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
@@ -104,6 +107,7 @@ public class InvitedController {
 
     // Chiamata post con validazione per creazione invitati
     @PostMapping("/create/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String store(@Valid @ModelAttribute("invited") Invited formInvited,
             BindingResult bindingResult, Model model, Authentication authentication, @PathVariable Integer id) {
 
@@ -134,6 +138,7 @@ public class InvitedController {
 
     // Invio email con l'invito
     @PostMapping("/email/send/{idInvited}/{idEvent}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String emailSend(@PathVariable Integer idInvited, @PathVariable Integer idEvent, Model model,
             RedirectAttributes redirectAttributes,
             Authentication authentication) {
@@ -157,6 +162,7 @@ public class InvitedController {
 
     // Get per reindirizzare su modifica dati invitato
     @GetMapping("edit/{idInvited}/{idEvent}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String edit(@PathVariable Integer idInvited, @PathVariable Integer idEvent, Model model,
             Authentication authentication) {
         Optional<User> loggedUser = userRepository.findByEmail(authentication.getName());
@@ -182,6 +188,7 @@ public class InvitedController {
 
     // Post per validare e modificare dati invitato
     @PostMapping("edit/{idInvited}/{idEvent}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String update(@Valid @ModelAttribute("invited") Invited formInvited,
             BindingResult bindingResult, Model model, @PathVariable Integer idInvited, @PathVariable Integer idEvent,
             Authentication authentication) {
@@ -213,6 +220,7 @@ public class InvitedController {
 
     // Chiamata post per eliminazione invitati
     @PostMapping("delete/{idInvited}/{idEvent}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String delete(@PathVariable Integer idInvited, @PathVariable Integer idEvent,
             Authentication authentication, Model model) {
 
@@ -222,7 +230,8 @@ public class InvitedController {
 
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
             if ((grantedAuthority.getAuthority().equals("ADMIN"))
-                    || (grantedAuthority.getAuthority().equals("USER") && singleInvited.get().getUser().equals(loggedUser.get()))) {
+                    || (grantedAuthority.getAuthority().equals("USER")
+                            && singleInvited.get().getUser().equals(loggedUser.get()))) {
                 invitedRepository.delete(singleInvited.get());
                 return "redirect:/invited/index/" + singleEvent.get().getId();
             }

@@ -51,6 +51,7 @@
                 <li class="elemento_lista"><strong>Ruolo: </strong>
                     <span th:each="role : ${user.roles}">[[${role.nome}]] </span>
                 </li>
+                
                 <li class="elemento_lista"><a class="btn btn-warning" th:href="@{|/user/edit/*{id}|}">Modifica</a></li>
             </ul>
 

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -46,6 +47,7 @@ public class PhotoController {
 
     // Caricamento foto invito (id evento)
     @PostMapping("/upload/invite/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String inviteUpload(@RequestParam MultipartFile file, Model model, @PathVariable Integer id,
             Authentication authentication) {
 
@@ -63,11 +65,17 @@ public class PhotoController {
                         return "photo/uploadInvite";
                     }
 
+                    //Elimino  foto caricata in precedenza
+                    String imgUrl = eventOptional.get().getLinkInvite();
+                    if (imgUrl != null){
+                        cloudinaryService.deleteByUrl(imgUrl);
+                    }
+
                     // Carico il file su Cloudinary
                     Map uploadResult = cloudinary.uploader().upload(
                             file.getBytes(),
-                            ObjectUtils.asMap("folder", "myEventsPhoto/invite/" + "user=" + utenteLoggato.get().getId()
-                                    + "event=" + eventOptional.get().getId()));
+                            ObjectUtils.asMap("folder", "myEventsPhoto/invite/" + "user" + utenteLoggato.get().getId()
+                                    + "/event" + eventOptional.get().getId()));
 
                     // Info del file caricato
                     Map<String, Object> fileInfo = new HashMap<>();
@@ -159,9 +167,9 @@ public class PhotoController {
 
     }
 
-    // Galleria foto caricaate
-
+    // Galleria foto caricate
     @GetMapping("/gallery/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String showGallery(Model model, Authentication authentication, @PathVariable Integer id) throws Exception {
         Optional<User> utenteLoggato = userRepository.findByEmail(authentication.getName());
         Optional<Event> eventOptional = eventRepository.findById(id);
@@ -194,6 +202,7 @@ public class PhotoController {
     }
 
     @PostMapping("/deleteImage")
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public String deleteImage(@RequestParam("url") String imageUrl, Model model) throws IOException {
         try {
             cloudinaryService.deleteByUrl(imageUrl);

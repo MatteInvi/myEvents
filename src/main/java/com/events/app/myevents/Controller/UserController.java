@@ -305,6 +305,7 @@ public class UserController {
                     if (imageUrl != null) {
                         cloudinaryService.deleteByUrl(imageUrl);
                     }
+
                     // Carico il file su Cloudinary
                     Map uploadResult = cloudinary.uploader().upload(
                             file.getBytes(),
@@ -381,4 +382,6 @@ public class UserController {
             return "utenti/reset-password";
         }
     }
+
+    
 }
