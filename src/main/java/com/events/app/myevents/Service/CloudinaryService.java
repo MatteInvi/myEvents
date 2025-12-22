@@ -15,10 +15,10 @@ public class CloudinaryService {
 
     @Autowired
     private Cloudinary cloudinary;
-
+    
+    //Eliminazione immagine da Cloudinary tramite URL
     public Map deleteByUrl(String imageUrl) throws IOException {
         String publicId = CloudinaryUtils.extractPublicId(imageUrl);
-        System.out.println(publicId);
         return cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
     }
 }

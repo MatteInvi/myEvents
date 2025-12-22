@@ -1,6 +1,5 @@
 package com.events.app.myevents.Model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,7 +31,6 @@ public class Invited {
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
-    @JsonBackReference
     private Event event;
 
     @NotBlank(message = "Inserire lo stato")
@@ -43,7 +41,6 @@ public class Invited {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference
     private User user;
 
     // Getter e Setter

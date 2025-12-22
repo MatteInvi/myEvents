@@ -16,9 +16,9 @@ public class CloudinaryUtils {
 
             // Rimuove la versione e l'estensione del file
             String pathPart = parts[1];
-            // Esempio: v1730761234/foto/profilo_abc123.jpg
+           
 
-            // Rimuove la versione (es. v1730761234/)
+            // Rimuove la versione
             pathPart = pathPart.replaceFirst("^v\\d+/", "");
 
             // Rimuove l'estensione (.jpg, .png, ecc.)
