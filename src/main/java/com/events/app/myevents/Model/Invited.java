@@ -1,6 +1,9 @@
 package com.events.app.myevents.Model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,16 +32,18 @@ public class Invited {
     @Email
     private String email;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     @NotBlank(message = "Inserire lo stato")
-    private String status;
+    private String status = "in_attesa";
 
     @Lob
     private String annotation;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
