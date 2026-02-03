@@ -1,6 +1,8 @@
 package com.events.app.myevents.Controller.API;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,25 +27,28 @@ import com.events.app.myevents.Repository.UserRepository;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/event")
+@RequestMapping("/api/events")
 public class EventControllerAPI {
-    
 
     @Autowired
     EventRepository eventRepository;
 
-    @Autowired 
+    @Autowired
     UserRepository userRepository;
 
-
+    // Recupera tutti gli eventi dell'utente loggato
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public ResponseEntity<List<Event>> getAllEvents(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).build();
+        }
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
         List<Event> events = eventRepository.findByUser(userLogged.get());
         return ResponseEntity.ok(events);
     }
 
+    // Recupera evento per ID
     @GetMapping("{id}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public ResponseEntity<?> getEventById(@PathVariable Integer id, Authentication authentication) {
@@ -56,21 +61,42 @@ public class EventControllerAPI {
         return event.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    // Creazione nuovo evento
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
-    public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event, Authentication authentication, BindingResult bindingResult) {
+    public ResponseEntity<?> createEvent(@Valid @RequestBody Event event, BindingResult bindingResult,
+            Authentication authentication) {
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
+
+        Map<String, String> response = new HashMap<>();
+
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(400).build();
+            response.put("error", "Dati evento non validi!");
+            return ResponseEntity.badRequest().body(response);
         }
-        event.setUser(userLogged.get());
-        Event savedEvent = eventRepository.save(event);
-        return ResponseEntity.ok(savedEvent);
+
+        try {
+            event.setUser(userLogged.get());
+        } catch (Exception e) {
+            response.put("error", "Utente non trovato!");
+            return ResponseEntity.status(404).body(response);
+        }
+
+        try {
+            eventRepository.save(event);
+        } catch (Exception e) {
+            response.put("error", "Errore durante la creazione dell'evento!");
+            return ResponseEntity.status(500).body(response);
+        }
+
+        return ResponseEntity.ok(event);
     }
 
+    // Aggiornamento evento
     @PutMapping("/update/{id}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
-    public ResponseEntity<?> updateEvent(@PathVariable Integer id, @Valid @RequestBody Event event, Authentication authentication, BindingResult bindingResult) {
+    public ResponseEntity<?> updateEvent(@PathVariable Integer id, @Valid @RequestBody Event event,
+            Authentication authentication, BindingResult bindingResult) {
         Optional<User> userLogged = userRepository.findByEmail(authentication.getName());
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(400).build();
@@ -92,6 +118,7 @@ public class EventControllerAPI {
         return ResponseEntity.notFound().build();
     }
 
+    // Eliminazione evento
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER_VERIFIED')")
     public ResponseEntity<?> deleteEvent(@PathVariable Integer id, Authentication authentication) {
